@@ -1,0 +1,67 @@
+---
+title: "How AI multiplied my speed as an iOS developer"
+description: "Same app, same single developer, two six-month windows: +81% code output, +47% delivery cadence, +38% feature throughput. What changed, and what didn't."
+date: "2026-09-15"
+tags: ["ai", "workflow", "swift", "productivity"]
+lang: "en"
+draft: true
+---
+
+For fifteen months I have been the only iOS developer on [GrowDiaries](/en/projects/growdiaries/), a social network for growers written in pure SwiftUI and The Composable Architecture. Halfway through I rebuilt the way I work around AI agents. Because the whole history lives in one git repository and every commit to `main` is a shippable build, I can measure what that change did.
+
+<StatTiles locale="en" />
+
+Two identical six-month windows: **June–November 2025** versus **February–July 2026**. The team size in both windows is one. The product, the architecture and the review bar are the same. The difference is the workflow.
+
+## What "AI-driven workflow" actually means here
+
+It is not autocomplete. The setup has three layers, and each one exists because the previous one alone was not enough.
+
+### 1. Agentic coding pipelines
+
+A feature starts as a ticket. I write a short spec — what the screen does, which TCA feature owns the state, what the edge cases are — and hand it to an agent that has the full repository, the project conventions and a set of skills describing how I build TCA features. The agent works through the ticket: reducer, view, dependencies, tests. I review the diff the way I would review a teammate's pull request.
+
+{/* TODO: concrete example — one ticket from spec to merged build, with the actual prompt and the time it took */}
+
+### 2. Automated verification loops
+
+The first version of the pipeline produced code that compiled and looked right, and then broke on the simulator. So the loop was closed: after the agent finishes, it builds the app, runs the unit tests, launches the feature on the simulator and drives it through the scenario from the spec. If something fails, it goes back and fixes it before I ever see the diff. Most of my review time now goes to design decisions, not to "does this run".
+
+{/* TODO: describe the simulator-driven UI check and one bug it caught before review */}
+
+### 3. Testing guardrails
+
+Speed without guardrails just moves the bugs downstream. Every build goes through Xcode Cloud with unit tests and BrowserStack autotests; the agent is not allowed to weaken a test to make it pass, and a set of architectural rules (how features compose, how navigation is modelled, how effects are cancelled) is checked on every change. The guardrails are what make the delivery cadence number meaningful: a build that ships is a build that passed the same bar as before.
+
+## The numbers, and how they were measured
+
+- **Code output** is lines of Swift added per month, `*.swift` files only, generated localizations and assets excluded. It went from about 6,000 to about 11,000 lines a month.
+- **Delivery cadence** is shippable builds per month. The project is trunk-based: every non-merge commit to `main` is a working build carrying a feature or a fix, so the commit count *is* the delivery count. It rose from roughly 17 to roughly 25 builds a month.
+- **Feature throughput** is features shipped per month, mined from ticket titles in the commit history. Tickets that are pure bug fixes are excluded. It rose from under 5 to almost 7 features a month.
+
+July 2026 was the record month: 29,125 lines added, with the brand pages, ads and dark mode landing in the same month. The full month-by-month picture, including the per-feature breakdown, is on the [stats page](/en/stats/).
+
+## What did not change
+
+- **The review bar.** I read every diff. The agent writes more of the first draft; I still own the decision.
+- **The architecture.** Pure SwiftUI and TCA before, pure SwiftUI and TCA after. Agents work best in a codebase with strong, explicit conventions — TCA turned out to be a very good fit for that.
+- **Crash-free rate and test coverage.** {/* TODO: add actual numbers from Xcode Cloud / Crashlytics */}
+
+## What I would tell another iOS developer
+
+1. Lines of code are a proxy. Measure builds and features alongside them, or the number means nothing.
+2. Invest in the verification loop before investing in the prompt. A model that can check its own work on a simulator is worth more than a better model that cannot.
+3. Write down your conventions. Every rule you can state explicitly is a rule the agent will follow on the next hundred tickets.
+
+```swift
+// A convention the agent is asked to follow: every long-running effect is cancellable by ID.
+case .onAppear:
+    return .run { send in
+        for await diary in await diaryClient.observe(id) {
+            await send(.diaryUpdated(diary))
+        }
+    }
+    .cancellable(id: CancelID.observe, cancelInFlight: true)
+```
+
+*This post is a draft. The methodology and the data are final; the personal examples are still being written.*

@@ -1,0 +1,494 @@
+<title>Dmitrii Cherviakov Dev Stats</title>
+<style>
+  :root {
+    --plane: #f9f9f7; --surface: #fcfcfb;
+    --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
+    --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,.10);
+    --accent: #2a78d6; --accent-deep: #1c5cab;
+    --wash: rgba(42,120,214,.10);
+    --good: #006300;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      --plane: #0d0d0d; --surface: #1a1a19;
+      --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+      --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10);
+      --accent: #3987e5; --accent-deep: #86b6ef;
+      --wash: rgba(57,135,229,.14);
+      --good: #0ca30c;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --plane: #0d0d0d; --surface: #1a1a19;
+    --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10);
+    --accent: #3987e5; --accent-deep: #86b6ef;
+    --wash: rgba(57,135,229,.14);
+    --good: #0ca30c;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--plane); color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 24px 64px; display: flex; flex-direction: column; gap: 28px; }
+
+  /* ---------- header ---------- */
+  header .eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  header h1 { margin: 0 0 4px; font-size: 27px; font-weight: 650; letter-spacing: -.01em; text-wrap: balance; }
+  header .period { color: var(--ink2); font-size: 14px; }
+  .hero { display: flex; align-items: center; gap: 14px; margin-top: 22px; flex-wrap: wrap; }
+  .hero .num { font-size: 54px; font-weight: 650; letter-spacing: -.02em; line-height: 1; }
+  .hero .cap { color: var(--ink2); font-size: 15px; max-width: 34ch; }
+
+  /* ---------- tiles ---------- */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 12px; }
+  .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px 12px; }
+  .tile .lbl { font-size: 12px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+  .tile .val { font-size: 26px; font-weight: 600; margin-top: 4px; letter-spacing: -.01em; }
+  .tile .sub { font-size: 12.5px; color: var(--ink2); margin-top: 2px; }
+  .tile .delta { display: inline-block; font-size: 13px; font-weight: 600; color: var(--good); margin-left: 6px; }
+
+  /* ---------- sections & cards ---------- */
+  h2 { margin: 14px 0 0; font-size: 19px; font-weight: 650; letter-spacing: -.01em; }
+  h2 + .note { margin-top: 2px; }
+  .note { color: var(--ink2); font-size: 13.5px; max-width: 72ch; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 18px 10px; position: relative; }
+  .card h3 { margin: 0; font-size: 15px; font-weight: 600; }
+  .card .sub { color: var(--muted); font-size: 12.5px; margin: 1px 0 10px; }
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .duo { grid-template-columns: 1fr; } }
+
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 2px 0 8px; font-size: 12.5px; color: var(--ink2); align-items: center; }
+  .legend .k { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; }
+  .linekey { width: 16px; height: 2px; border-radius: 1px; }
+
+  .chart { width: 100%; }
+  .chart svg { display: block; width: 100%; height: auto; }
+  svg text { font: 11.5px system-ui, -apple-system, "Segoe UI", sans-serif; font-variant-numeric: tabular-nums; fill: var(--muted); }
+  svg text.dl { font-size: 12px; font-weight: 600; fill: var(--ink2); }
+  .gridline { stroke: var(--grid); stroke-width: 1; }
+  .axisline { stroke: var(--axis); stroke-width: 1; }
+
+  .bar-hit:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .bar-hit { outline: none; }
+
+  /* ---------- tooltip ---------- */
+  .tip {
+    position: absolute; pointer-events: none; z-index: 5; display: none;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.13); padding: 8px 11px; font-size: 12.5px; min-width: 150px;
+  }
+  .tip .t { color: var(--muted); margin-bottom: 4px; font-size: 11.5px; letter-spacing: .03em; }
+  .tip .row { display: flex; align-items: center; gap: 7px; margin-top: 2px; }
+  .tip .row .lk { width: 12px; height: 2.5px; border-radius: 1px; flex: none; }
+  .tip .row b { font-variant-numeric: tabular-nums; font-weight: 650; color: var(--ink); }
+  .tip .row span { color: var(--ink2); }
+
+  /* ---------- data tables ---------- */
+  details { margin: 6px 0 6px; }
+  summary { cursor: pointer; font-size: 12.5px; color: var(--muted); user-select: none; }
+  summary:hover { color: var(--ink2); }
+  .tblwrap { overflow-x: auto; margin-top: 8px; }
+  table { border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  th, td { padding: 3px 12px 3px 0; text-align: right; border-bottom: 1px solid var(--grid); }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 500; }
+  td { color: var(--ink2); }
+
+  footer { color: var(--muted); font-size: 12.5px; max-width: 76ch; border-top: 1px solid var(--grid); padding-top: 14px; }
+  footer p { margin: 0 0 6px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .bar-hit rect.mark { transition: opacity .1s ease; }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Dmitrii Cherviakov · Senior iOS Developer · GrowDiaries</div>
+    <h1>Development Trajectory</h1>
+    <div class="period" id="period"></div>
+    <div class="hero">
+      <div class="num" id="heroLoc"></div>
+      <div class="cap">lines of Swift written by Dmitrii Cherviakov that live in the project today — excluding generated localizations and assets</div>
+    </div>
+  </header>
+
+  <h2>Productivity growth, year over year</h2>
+  <div class="note">Two identical six-month windows: <b>June–November 2025</b> vs <b>February–July 2026</b>. All three metrics grew — the trend doesn't rest on a single number.</div>
+  <div class="tiles" id="evidence"></div>
+  <div class="note" id="evidenceNote"></div>
+
+  <div class="tiles" id="kpis"></div>
+
+  <section class="card">
+    <h3>Codebase growth</h3>
+    <div class="sub">cumulative Swift lines (added − deleted), by month</div>
+    <div class="chart" id="chGrowth"></div>
+    <details><summary>Show table</summary><div class="tblwrap" id="tbGrowth"></div></details>
+  </section>
+
+  <h2>Velocity</h2>
+  <div class="note">Monthly output. The iOS app is built single-handedly by Dmitrii Cherviakov, so a rising curve reflects his growing personal productivity — not headcount.</div>
+
+  <div class="duo">
+    <section class="card">
+      <h3>Lines added per month</h3>
+      <div class="sub" id="subVelocity">*.swift only, before deletions</div>
+      <div class="legend">
+        <span class="k"><span class="swatch" style="background:var(--accent)"></span>lines added</span>
+        <span class="k"><span class="linekey" style="background:var(--ink2)"></span>3-month average</span>
+      </div>
+      <div class="chart" id="chVelocity"></div>
+      <details><summary>Show table</summary><div class="tblwrap" id="tbVelocity"></div></details>
+    </section>
+    <section class="card">
+      <h3>Shippable builds per month</h3>
+      <div class="sub" id="subCommits">every commit to main is a working build with a feature or fix · merge commits excluded</div>
+      <div class="chart" id="chCommits"></div>
+      <details><summary>Show table</summary><div class="tblwrap" id="tbCommits"></div></details>
+    </section>
+  </div>
+
+  <h2>Features shipped</h2>
+  <div class="note">Features are mined from ticket titles in the commit history — <span id="featCount"></span> in total. Each bar segment is one feature; the segment's height is the lines of code added on its ticket. Tickets whose commits are pure bug fixes are excluded, so the bars undercount the total volume of work.</div>
+
+  <section class="card">
+    <h3>Features per month</h3>
+    <div class="sub" id="subFeatures">number above the bar = features shipped that month · hover for the list</div>
+    <div class="chart" id="chFeatures"></div>
+    <details><summary>Show table</summary><div class="tblwrap" id="tbFeatures"></div></details>
+  </section>
+
+  <section class="card">
+    <h3>Project scale</h3>
+    <div class="sub">Swift files at month end</div>
+    <div class="chart" id="chFiles"></div>
+    <details><summary>Show table</summary><div class="tblwrap" id="tbFiles"></div></details>
+  </section>
+
+  <footer>
+    <p><b>Author.</b> Every line counted on this page was written by Dmitrii Cherviakov, the sole iOS developer on the project — pure SwiftUI and The Composable Architecture (TCA).</p>
+    <p><b>Methodology.</b> Source — the git history of the main branch. Only <code>*.swift</code> files are counted; the generated <code>Localizable.xcstrings</code> (77k lines of JSON), assets and project files are excluded. The cumulative curve is built from <code>git log --numstat</code> and cross-checked against an exact line count at the end of each month — 0.3% discrepancy.</p>
+    <p><b>Builds.</b> The project follows trunk-based development: every non-merge commit to main is a shippable build carrying a feature or a fix, so build counts double as delivery cadence.</p>
+    <p><b>Features.</b> A ticket counts as a feature when at least one of its commits is not a fix; its size is the total lines added across the ticket's commits, attributed to the month where most of that code was written. Ticket IDs are omitted.</p>
+    <p>Lines of code are a proxy metric — sensitive to style and refactoring. That's why build counts and feature counts are shown alongside: the growth conclusion rests on more than one signal.</p>
+  </footer>
+</div>
+
+<script>
+const D = {"months":["2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08"],"cum":[0,2419,6748,10516,16542,18385,20411,22319,23263,22594,26541,28249,31230,37972,48297,68333,76178],"add":[0,6667,6498,5881,9920,4029,5894,4173,2898,2990,6060,3353,5960,8433,13105,29125,10133],"del":[0,4248,2169,2113,3894,2186,3868,2265,1954,3659,2113,1645,2979,1691,2780,9089,2288],"com":[0,14,12,11,21,14,25,20,15,25,31,20,25,26,24,26,12],"files":[31,53,69,94,117,123,132,135,139,140,153,157,166,195,271,363,391],"totals":{"commits":321,"added":125119,"deleted":48941,"avg_commit_size":390},"loc":86061,"nfiles":391,"streak":{"days":6,"end":"2025-08-15"},"first":"2025-05-02","last":"2026-08-21","partialLast":true};
+
+const M3 = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MF = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const monthLabel = m => { const [y, mm] = m.split("-"); return M3[+mm - 1] + " " + y.slice(2); };
+const monthFull = m => { const [y, mm] = m.split("-"); return MF[+mm - 1] + " " + y; };
+const dateFull = iso => { const [y, m, d] = iso.split("-"); return MF[+m - 1] + " " + (+d) + ", " + y; };
+const fmt = n => Math.round(n).toLocaleString("en-US");
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const NS = "http://www.w3.org/2000/svg";
+const el = (name, attrs, parent) => {
+  const e = document.createElementNS(NS, name);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+};
+
+const N = D.months.length;
+const PARTIAL = D.partialLast;
+const roll3 = D.add.map((_, i) => {
+  const w = D.add.slice(Math.max(0, i - 2), i + 1);
+  return w.reduce((a, b) => a + b, 0) / w.length;
+});
+
+// ---------- header & KPI tiles ----------
+const t = D.totals;
+document.getElementById("period").textContent =
+  "iOS app · SwiftUI + TCA · " + dateFull(D.first) + " — " + dateFull(D.last) + " · " + t.commits + " commits to main";
+document.getElementById("heroLoc").textContent = fmt(D.loc);
+const bestIdx = D.add.indexOf(Math.max(...D.add));
+const tiles = [
+  { lbl: "Shippable builds", val: fmt(t.commits), sub: "every commit to main is a working build" },
+  { lbl: "Average commit", val: fmt(t.avg_commit_size), sub: "lines added per commit" },
+  { lbl: "Best month", val: monthFull(D.months[bestIdx]), sub: "+" + fmt(D.add[bestIdx]) + " lines — project record" },
+  { lbl: "Longest streak", val: D.streak.days + " days", sub: "consecutive commit days, " + monthFull(D.streak.end.slice(0, 7)) },
+];
+document.getElementById("kpis").innerHTML = tiles.map(x =>
+  `<div class="tile"><div class="lbl">${x.lbl}</div><div class="val">${x.val}</div><div class="sub">${x.sub}</div></div>`).join("");
+
+// ---------- partial-month captions ----------
+if (PARTIAL) {
+  const lastName = monthLabel(D.months[N - 1]);
+  document.getElementById("subVelocity").textContent += " · " + lastName + " — partial month";
+  document.getElementById("subCommits").textContent += " · " + lastName + " — partial month";
+}
+
+// ---------- tooltip ----------
+function makeTip(card) {
+  const tip = document.createElement("div");
+  tip.className = "tip";
+  card.appendChild(tip);
+  return {
+    show(mx, my, title, rows) {
+      tip.innerHTML = "";
+      const tt = document.createElement("div"); tt.className = "t"; tt.textContent = title; tip.appendChild(tt);
+      for (const r of rows) {
+        const row = document.createElement("div"); row.className = "row";
+        const lk = document.createElement("i"); lk.className = "lk"; lk.style.background = r.c; row.appendChild(lk);
+        const b = document.createElement("b"); b.textContent = r.v; row.appendChild(b);
+        const s = document.createElement("span"); s.textContent = r.n; row.appendChild(s);
+        tip.appendChild(row);
+      }
+      tip.style.display = "block";
+      const cw = card.clientWidth, tw = tip.offsetWidth;
+      let x = mx + 14; if (x + tw > cw - 8) x = mx - tw - 14;
+      tip.style.left = Math.max(8, x) + "px";
+      tip.style.top = Math.max(8, my - tip.offsetHeight - 12) + "px";
+    },
+    hide() { tip.style.display = "none"; },
+  };
+}
+
+// ---------- chart scaffold ----------
+const PAD = { l: 56, r: 14, t: 14, b: 26 };
+function frame(container, H, maxY, tickFmt, band) {
+  const W = Math.max(container.clientWidth, 280);
+  container.innerHTML = "";
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" }, container);
+  const iw = W - PAD.l - PAD.r, ih = H - PAD.t - PAD.b;
+  const step = niceStep(maxY);
+  const top = Math.ceil(maxY / step) * step;
+  const y = v => PAD.t + ih - (v / top) * ih;
+  for (let v = 0; v <= top; v += step) {
+    el("line", { x1: PAD.l, x2: W - PAD.r, y1: y(v), y2: y(v), class: v === 0 ? "axisline" : "gridline" }, svg);
+    if (v > 0) el("text", { x: PAD.l - 6, y: y(v) + 4, "text-anchor": "end" }, svg).textContent = tickFmt(v);
+  }
+  const x = band
+    ? (i => PAD.l + (i + 0.5) * (iw / N))
+    : (i => PAD.l + (N === 1 ? 0 : (i / (N - 1)) * iw));
+  const lblEvery = Math.max(1, Math.ceil(N / Math.max(1, Math.floor(iw / 52))));
+  for (let i = 0; i < N; i++) if (i === N - 1 || (i % lblEvery === 0 && N - 1 - i >= lblEvery)) {
+    const anchor = band ? "middle" : (i === N - 1 ? "end" : (i === 0 ? "start" : "middle"));
+    el("text", { x: x(i), y: H - 8, "text-anchor": anchor }, svg).textContent = monthLabel(D.months[i]);
+  }
+  return { svg, W, H, iw, ih, x, y, top };
+}
+function niceStep(max) {
+  const raw = max / 4, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  for (const m of [1, 2, 2.5, 5, 10]) if (raw <= m * mag) return m * mag;
+  return 10 * mag;
+}
+const linePath = (pts) => pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join("");
+
+function addCrosshair(card, container, f, rowsAt) {
+  const tip = makeTip(card);
+  const hair = el("line", { y1: f.y(f.top), y2: f.y(0), class: "axisline", opacity: 0 }, f.svg);
+  const onMove = e => {
+    const r = container.getBoundingClientRect();
+    const sx = (e.clientX - r.left) * (f.W / r.width);
+    const i = Math.max(0, Math.min(N - 1, Math.round((sx - PAD.l) / (f.iw / (N - 1)))));
+    hair.setAttribute("x1", f.x(i)); hair.setAttribute("x2", f.x(i)); hair.setAttribute("opacity", 1);
+    const cr = card.getBoundingClientRect();
+    tip.show(e.clientX - cr.left, e.clientY - cr.top, monthFull(D.months[i]), rowsAt(i));
+  };
+  container.addEventListener("pointermove", onMove);
+  container.addEventListener("pointerleave", () => { hair.setAttribute("opacity", 0); tip.hide(); });
+}
+
+// ---------- growth (area) ----------
+function drawGrowth() {
+  const box = document.getElementById("chGrowth"), card = box.closest(".card");
+  const f = frame(box, 300, D.cum[N - 1] * 1.06, v => fmt(v / 1000) + "k");
+  const base = f.y(0);
+  const pts = D.months.map((_, i) => [f.x(i), f.y(D.cum[i])]);
+  el("path", { d: linePath(pts) + `L${f.x(N - 1)} ${base}L${f.x(0)} ${base}Z`, fill: "var(--wash)" }, f.svg);
+  el("path", { d: linePath(pts), fill: "none", stroke: "var(--accent)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, f.svg);
+  el("circle", { cx: f.x(N - 1), cy: f.y(D.cum[N - 1]), r: 4.5, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2 }, f.svg);
+  el("text", { x: f.x(N - 1) - 8, y: f.y(D.cum[N - 1]) - 10, "text-anchor": "end", class: "dl" }, f.svg).textContent = fmt(D.cum[N - 1]) + " lines";
+  addCrosshair(card, box, f, i => [
+    { c: css("--accent"), v: fmt(D.cum[i]), n: "lines" },
+  ]);
+}
+
+// ---------- bars ----------
+function drawBars(boxId, vals, opts) {
+  const box = document.getElementById(boxId), card = box.closest(".card");
+  const maxY = Math.max(...vals);
+  const f = frame(box, 260, maxY * 1.08, opts.tickFmt, true);
+  const band = f.iw / N;
+  const bw = Math.min(24, band - 4);
+  const tip = makeTip(card);
+  for (let i = 0; i < N; i++) {
+    const cx = f.x(i);
+    const g = el("g", { class: "bar-hit", tabindex: 0, role: "img",
+      "aria-label": monthFull(D.months[i]) + ": " + fmt(vals[i]) + " " + opts.unit }, f.svg);
+    if (PARTIAL && i === N - 1) g.setAttribute("opacity", .45);
+    el("rect", { x: cx - band / 2, y: f.y(f.top), width: band, height: f.y(0) - f.y(f.top), fill: "transparent" }, g);
+    if (vals[i] > 0)
+      el("rect", { class: "mark", x: cx - bw / 2, y: f.y(vals[i]), width: bw, height: Math.max(1, f.y(0) - f.y(vals[i])), fill: "var(--accent)", rx: 3 }, g);
+    const show = e => {
+      const cr = card.getBoundingClientRect();
+      const mx = e.clientX != null ? e.clientX - cr.left : cx / f.W * card.clientWidth;
+      const my = e.clientY != null ? e.clientY - cr.top : 40;
+      const rows = [{ c: css("--accent"), v: fmt(vals[i]), n: opts.unit }];
+      if (opts.extraRow && !(PARTIAL && i === N - 1)) rows.push(opts.extraRow(i));
+      tip.show(mx, my, monthFull(D.months[i]) + (PARTIAL && i === N - 1 ? " (partial)" : ""), rows);
+      g.style.opacity = PARTIAL && i === N - 1 ? .35 : .85;
+    };
+    const hide = () => { tip.hide(); g.style.opacity = PARTIAL && i === N - 1 ? .45 : 1; };
+    g.addEventListener("pointermove", show);
+    g.addEventListener("pointerleave", hide);
+    g.addEventListener("focus", show);
+    g.addEventListener("blur", hide);
+  }
+  if (opts.rollLine) {
+    const upto = PARTIAL ? N - 1 : N;
+    el("path", { d: linePath(D.months.slice(0, upto).map((_, i) => [f.x(i), f.y(roll3[i])])), fill: "none",
+      stroke: "var(--ink2)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round", "pointer-events": "none" }, f.svg);
+  }
+  if (opts.labelMax) {
+    const mi = vals.indexOf(Math.max(...vals));
+    el("text", { x: f.x(mi), y: f.y(vals[mi]) - 7, "text-anchor": "end", class: "dl" }, f.svg).textContent = fmt(vals[mi]);
+  }
+}
+
+// ---------- features (stacked per-feature segments) ----------
+const FEATS = [
+  [],
+  [["Diary UI revamp",3093],["Custom products",2298],["Diary week picker",619]],
+  [["Germination week",3606],["Custom lamp",754],["Veg week logic",552],["Week cover picker",305]],
+  [["Harvest week UI",2794],["Media manager",322],["Veg unit selector",129]],
+  [["Diary view",7048],["Diary feed & unfollow",2196],["Comments view",2147]],
+  [["Unit presets",1881],["Inline week validation",499],["Nutrient errors",394],["Veg/flo autofill",221],["Germination strains rework",181],["Await media upload on save",159]],
+  [["Search tab",979],["Login flow update",494],["Comments auto height",256],["Custom methods alert",239],["Week value rounding",194],["Diary name as title",165],["Screen class analytics",31]],
+  [["Fullscreen mode",1672],["Contact form",960],["Diary setup rework",607],["Landscape & pinch zoom",422],["Lamp editing workflow",105],["Fullscreen video fit",4]],
+  [["Following section",1223],["Main menu following",582],["User view on List",422],["Shared video player",293],["User view UI update",287],["Contact form media",114],["Harvest values update",85],["Fullscreen rotation",39],["Fullscreen analytics",27]],
+  [["Comment media upload",905],["Comment email confirmation",201],["Official user status",158],["Search follow support",41]],
+  [["Notifications tab",2952],["Notification settings",1285],["Context cells",421],["Visible bottom menu",376]],
+  [["Social login & sign-up",1738],["Deeplink support",616]],
+  [["Custom context menu",1351],["Camera capture upload",970],["Comments on List",644],["Custom brand/product editing",508],["Extended setup button",358],["Weeks sorting",114]],
+  [["Chat",3375],["Question view",1242],["Question list",1015],["Question tags",735],["Button hierarchy & P3 colors",383],["Media upload progress",362],["Notification service extension",71],["Week nav centering",55],["Data model rename",7]],
+  [["Contest join/withdraw",5271],["Contest view",3101],["Create/edit question",1808],["Questions integration",321],["Awards integration",198],["Message notifications",186],["Guest input prompt",115],["Chat delivery status",14],["Translation removal",7]],
+  [["Brand view",13378],["Ads",5308],["Brand list",1534],["Dark mode",1036],["New skeletons",962],["Shipping address validation",804],["Scroll to harvest week",137],["Diary week navigation",131],["Shipping badge animation",114],["Contest diary model",90]],
+  [["Content translation",2772],["New deeplinks",1592],["No-internet popup",613],["GDPR update",454],["Diaries section",197]],
+];
+const featTotal = i => FEATS[i].reduce((a, f) => a + f[1], 0);
+document.getElementById("featCount").textContent = FEATS.reduce((a, m) => a + m.length, 0);
+if (PARTIAL)
+  document.getElementById("subFeatures").textContent += " · " + monthLabel(D.months[N - 1]) + " — partial month";
+
+// ---------- evidence tiles ----------
+const idx = m => D.months.indexOf(m);
+const win = (a, b) => {
+  const [i, j] = [idx(a), idx(b) + 1], n = j - i;
+  const add = D.add.slice(i, j).reduce((x, y) => x + y, 0);
+  const com = D.com.slice(i, j).reduce((x, y) => x + y, 0);
+  const feat = FEATS.slice(i, j).reduce((x, m) => x + m.length, 0);
+  return { addMo: add / n, comMo: com / n, featMo: feat / n };
+};
+const base = win("2025-06", "2025-11"), last = win("2026-02", "2026-07");
+const pct = (a, b) => "+" + Math.round((b / a - 1) * 100) + "%";
+const ev = [
+  { lbl: "Code output", v: fmt(last.addMo), d: pct(base.addMo, last.addMo), sub: "lines / month · was " + fmt(base.addMo) },
+  { lbl: "Delivery cadence", v: last.comMo.toFixed(1), d: pct(base.comMo, last.comMo), sub: "shippable builds / month · was " + base.comMo.toFixed(1) },
+  { lbl: "Feature throughput", v: last.featMo.toFixed(1), d: pct(base.featMo, last.featMo), sub: "features / month · was " + base.featMo.toFixed(1) },
+];
+document.getElementById("evidence").innerHTML = ev.map(x =>
+  `<div class="tile"><div class="lbl">${x.lbl}</div><div class="val">${x.v}<span class="delta">${x.d}</span></div><div class="sub">${x.sub}</div></div>`).join("");
+document.getElementById("evidenceNote").textContent =
+  monthFull(D.months[bestIdx]) + " is the project's record month: " + fmt(D.add[bestIdx]) + " lines added." +
+  (PARTIAL ? " " + monthFull(D.months[N - 1]) + " is excluded from the comparison — the month is still in progress (data through " + dateFull(D.last) + ")." : "");
+
+function drawFeatures() {
+  const box = document.getElementById("chFeatures"), card = box.closest(".card");
+  const maxY = Math.max(...D.months.map((_, i) => featTotal(i)));
+  const f = frame(box, 300, maxY * 1.1, v => fmt(v / 1000) + "k", true);
+  const band = f.iw / N;
+  const bx = f.x;
+  const bw = Math.min(26, band - 4);
+  const tip = makeTip(card);
+  const GAP = 1.5;
+  for (let i = 0; i < N; i++) {
+    if (!FEATS[i].length) continue;
+    const g = el("g", { class: "bar-hit", tabindex: 0, role: "img",
+      "aria-label": monthFull(D.months[i]) + ": " + FEATS[i].length + " features, " + fmt(featTotal(i)) + " lines" }, f.svg);
+    if (PARTIAL && i === N - 1) g.setAttribute("opacity", .45);
+    el("rect", { x: bx(i) - band / 2, y: f.y(f.top), width: band, height: f.y(0) - f.y(f.top), fill: "transparent" }, g);
+    let yCur = f.y(0);
+    const segs = FEATS[i].slice().sort((a, b) => b[1] - a[1]);
+    segs.forEach((s, si) => {
+      const h = Math.max(2, (f.y(0) - f.y(s[1])) - (si ? GAP : 0));
+      yCur -= h;
+      el("rect", { class: "mark", x: bx(i) - bw / 2, y: yCur, width: bw, height: h,
+        fill: "var(--accent)", opacity: si % 2 ? .55 : 1, rx: 2 }, g);
+      yCur -= GAP;
+    });
+    el("text", { x: bx(i), y: yCur - 5, "text-anchor": "middle", class: "dl" }, g).textContent = FEATS[i].length;
+    const show = e => {
+      const cr = card.getBoundingClientRect();
+      const mx = e.clientX != null ? e.clientX - cr.left : bx(i) / f.W * card.clientWidth;
+      const my = e.clientY != null ? e.clientY - cr.top : 40;
+      const rows = segs.map((s, si) => ({ c: si % 2 ? "color-mix(in srgb, var(--accent) 55%, transparent)" : css("--accent"), v: fmt(s[1]), n: s[0] }));
+      tip.show(mx, my, monthFull(D.months[i]) + (PARTIAL && i === N - 1 ? " (partial)" : "") + " · " + segs.length + (segs.length === 1 ? " feature" : " features"), rows);
+      g.style.opacity = PARTIAL && i === N - 1 ? .35 : .85;
+    };
+    const hide = () => { tip.hide(); g.style.opacity = PARTIAL && i === N - 1 ? .45 : 1; };
+    g.addEventListener("pointermove", show);
+    g.addEventListener("pointerleave", hide);
+    g.addEventListener("focus", show);
+    g.addEventListener("blur", hide);
+  }
+}
+
+// ---------- files line ----------
+function drawFiles() {
+  const box = document.getElementById("chFiles"), card = box.closest(".card");
+  const f = frame(box, 208, Math.max(...D.files) * 1.1, v => fmt(v));
+  const pts = D.months.map((_, i) => [f.x(i), f.y(D.files[i])]);
+  el("path", { d: linePath(pts) + `L${f.x(N - 1)} ${f.y(0)}L${f.x(0)} ${f.y(0)}Z`, fill: "var(--wash)" }, f.svg);
+  el("path", { d: linePath(pts), fill: "none", stroke: "var(--accent)", "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, f.svg);
+  el("circle", { cx: f.x(N - 1), cy: f.y(D.files[N - 1]), r: 4.5, fill: "var(--accent)", stroke: "var(--surface)", "stroke-width": 2 }, f.svg);
+  el("text", { x: f.x(N - 1) - 8, y: f.y(D.files[N - 1]) - 9, "text-anchor": "end", class: "dl" }, f.svg).textContent = D.files[N - 1] + " files";
+  addCrosshair(card, box, f, i => [{ c: css("--accent"), v: fmt(D.files[i]), n: "files" }]);
+}
+
+// ---------- tables ----------
+function table(id, headers, rowsFn) {
+  const rows = D.months.map((m, i) => `<tr><td>${monthLabel(m)}</td>${rowsFn(i).map(v => `<td>${v}</td>`).join("")}</tr>`).join("");
+  document.getElementById(id).innerHTML =
+    `<table><thead><tr><th>Month</th>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>`;
+}
+table("tbGrowth", ["Cumulative"], i => [fmt(D.cum[i])]);
+table("tbVelocity", ["Added", "Deleted", "3-mo avg"], i => [fmt(D.add[i]), fmt(D.del[i]), fmt(roll3[i])]);
+table("tbCommits", ["Builds"], i => [fmt(D.com[i])]);
+table("tbFiles", ["Files"], i => [fmt(D.files[i])]);
+{
+  const rows = D.months.flatMap((m, i) =>
+    FEATS[i].slice().sort((a, b) => b[1] - a[1]).map(s =>
+      `<tr><td>${monthLabel(m)}</td><td style="text-align:left">${s[0]}</td><td>${fmt(s[1])}</td></tr>`)).join("");
+  document.getElementById("tbFeatures").innerHTML =
+    `<table><thead><tr><th>Month</th><th style="text-align:left">Feature</th><th>Lines added</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// ---------- render + resize ----------
+function drawAll() {
+  drawGrowth();
+  drawBars("chVelocity", D.add, {
+    tickFmt: v => fmt(v / 1000) + "k", rollLine: true, labelMax: true, unit: "lines added",
+    extraRow: i => ({ c: css("--ink2"), v: fmt(roll3[i]), n: "3-mo average" }),
+  });
+  drawBars("chCommits", D.com, { tickFmt: v => fmt(v), unit: "builds" });
+  drawFeatures();
+  drawFiles();
+}
+drawAll();
+let rt;
+window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawAll, 150); });
+new MutationObserver(drawAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+if (window.matchMedia) matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
+</script>
