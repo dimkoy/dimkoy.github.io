@@ -5,17 +5,21 @@ const intlLocale: Record<Locale, string> = { en: "en-US", ru: "ru-RU" };
 /** Formats an ISO date (YYYY-MM-DD) deterministically on the server (UTC). */
 export function formatDate(iso: string, locale: Locale, opts: Intl.DateTimeFormatOptions = {}): string {
   const date = new Date(iso.length === 7 ? `${iso}-01` : iso);
-  return new Intl.DateTimeFormat(intlLocale[locale], {
+  const out = new Intl.DateTimeFormat(intlLocale[locale], {
     timeZone: "UTC",
     year: "numeric",
     month: "long",
     day: iso.length === 7 ? undefined : "numeric",
     ...opts,
   }).format(date);
+  // ru-RU appends " г." after the year; drop it so dates read cleanly inside sentences.
+  return out.replace(/\s?г\.$/, "");
 }
 
+/** "July 2026" / "Июль 2026" — capitalised so it can open a sentence. */
 export function formatMonth(iso: string, locale: Locale): string {
-  return formatDate(iso.slice(0, 7), locale, { month: "long", year: "numeric" });
+  const s = formatDate(iso.slice(0, 7), locale, { month: "long", year: "numeric" });
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 export function formatNumber(n: number, locale: Locale): string {
