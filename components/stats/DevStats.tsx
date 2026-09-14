@@ -22,24 +22,25 @@ function Tile({ lbl, val, sub, delta }: { lbl: string; val: string; sub: string;
   );
 }
 
-function Card({ title, sub, chart, legend, table }: { title: string; sub: string; chart: string; legend?: React.ReactNode; table: React.ReactNode }) {
+function Card({ title, sub, chart, legend, table, aria }: { title: string; sub: string; chart: string; legend?: React.ReactNode; table: React.ReactNode; aria: string }) {
   return (
-    <section className={s.card} data-card>
-      <h3>{title}</h3>
+    <section className={s.card} data-card aria-labelledby={`${chart}-title`}>
+      <h3 id={`${chart}-title`}>{title}</h3>
       <div className={s.sub}>{sub}</div>
       {legend}
-      <div className={s.chart} data-chart={chart} />
+      <div className={s.chart} data-chart={chart} role="group" aria-label={aria} aria-describedby={`${chart}-table`} />
       {table}
     </section>
   );
 }
 
-function Table({ head, rows, toggle }: { head: (string | { h: string; left?: boolean })[]; rows: (string | number)[][]; toggle: string }) {
+function Table({ head, rows, toggle, id, caption }: { head: (string | { h: string; left?: boolean })[]; rows: (string | number)[][]; toggle: string; id: string; caption: string }) {
   return (
     <details className={s.details}>
       <summary>{toggle}</summary>
       <div className={s.tblwrap}>
-        <table>
+        <table id={id}>
+          <caption className="sr-only">{caption}</caption>
           <thead><tr>{head.map((h, i) => typeof h === "string" ? <th key={i}>{h}</th> : <th key={i} className={h.left ? s.left : undefined}>{h.h}</th>)}</tr></thead>
           <tbody>{rows.map((r, i) => <tr key={i}>{r.map((c, j) => <td key={j} className={typeof head[j] === "object" && (head[j] as { left?: boolean }).left ? s.left : undefined}>{c}</td>)}</tr>)}</tbody>
         </table>
@@ -100,36 +101,36 @@ export function DevStats({ locale, dict }: { locale: Locale; dict: Dictionary })
           <Tile lbl={L.kpiStreak} val={t(L.kpiStreakVal, { days: D.streak.days })} sub={t(L.kpiStreakSub, { month: mFull(D.streak.end.slice(0, 7)) })} />
         </div>
 
-        <Card title={L.growthTitle} sub={L.growthSub} chart="growth"
-          table={<Table toggle={L.showTable} head={[{ h: L.month, left: true }, L.cumulative]} rows={D.months.map((m, i) => [mLbl(m), fmt(D.cum[i])])} />} />
+        <Card title={L.growthTitle} sub={L.growthSub} chart="growth" aria={t(L.chartAria, { title: L.growthTitle })}
+          table={<Table id="growth-table" caption={L.growthTitle} toggle={L.showTable} head={[{ h: L.month, left: true }, L.cumulative]} rows={D.months.map((m, i) => [mLbl(m), fmt(D.cum[i])])} />} />
 
         <section>
           <h2 className="text-lg font-semibold tracking-tight">{L.velocityTitle}</h2>
           <p className="mt-1 max-w-[72ch] text-sm text-ink2">{L.velocityNote}</p>
         </section>
         <div className="grid gap-4 md:grid-cols-2">
-          <Card title={L.linesTitle} sub={L.linesSub + partial} chart="velocity"
+          <Card title={L.linesTitle} sub={L.linesSub + partial} chart="velocity" aria={t(L.chartAria, { title: L.linesTitle })}
             legend={
               <div className={s.legend}>
                 <span className={s.k}><span className={s.swatch} style={{ background: "var(--accent)" }} />{L.legendLines}</span>
                 <span className={s.k}><span className={s.linekey} style={{ background: "var(--ink2)" }} />{L.legendAvg}</span>
               </div>
             }
-            table={<Table toggle={L.showTable} head={[{ h: L.month, left: true }, L.added, L.deleted, L.avg3]} rows={D.months.map((m, i) => [mLbl(m), fmt(D.add[i]), fmt(D.del[i]), fmt(r3[i])])} />} />
-          <Card title={L.buildsTitle} sub={L.buildsSub + partial} chart="commits"
-            table={<Table toggle={L.showTable} head={[{ h: L.month, left: true }, L.builds]} rows={D.months.map((m, i) => [mLbl(m), fmt(D.com[i])])} />} />
+            table={<Table id="velocity-table" caption={L.linesTitle} toggle={L.showTable} head={[{ h: L.month, left: true }, L.added, L.deleted, L.avg3]} rows={D.months.map((m, i) => [mLbl(m), fmt(D.add[i]), fmt(D.del[i]), fmt(r3[i])])} />} />
+          <Card title={L.buildsTitle} sub={L.buildsSub + partial} chart="commits" aria={t(L.chartAria, { title: L.buildsTitle })}
+            table={<Table id="commits-table" caption={L.buildsTitle} toggle={L.showTable} head={[{ h: L.month, left: true }, L.builds]} rows={D.months.map((m, i) => [mLbl(m), fmt(D.com[i])])} />} />
         </div>
 
         <section>
           <h2 className="text-lg font-semibold tracking-tight">{L.featuresTitle}</h2>
           <p className="mt-1 max-w-[72ch] text-sm text-ink2">{t(L.featuresNote, { count: featureCount() })}</p>
         </section>
-        <Card title={L.featuresChartTitle} sub={L.featuresChartSub + partial} chart="features"
-          table={<Table toggle={L.showTable} head={[{ h: L.month, left: true }, { h: L.feature, left: true }, L.linesAdded]}
+        <Card title={L.featuresChartTitle} sub={L.featuresChartSub + partial} chart="features" aria={t(L.chartAria, { title: L.featuresChartTitle })}
+          table={<Table id="features-table" caption={L.featuresChartTitle} toggle={L.showTable} head={[{ h: L.month, left: true }, { h: L.feature, left: true }, L.linesAdded]}
             rows={D.months.flatMap((m, i) => FEATS[i].slice().sort((a, b) => b[1] - a[1]).map((f) => [mLbl(m), f[0], fmt(f[1])]))} />} />
 
-        <Card title={L.filesTitle} sub={L.filesSub} chart="files"
-          table={<Table toggle={L.showTable} head={[{ h: L.month, left: true }, L.files]} rows={D.months.map((m, i) => [mLbl(m), fmt(D.files[i])])} />} />
+        <Card title={L.filesTitle} sub={L.filesSub} chart="files" aria={t(L.chartAria, { title: L.filesTitle })}
+          table={<Table id="files-table" caption={L.filesTitle} toggle={L.showTable} head={[{ h: L.month, left: true }, L.files]} rows={D.months.map((m, i) => [mLbl(m), fmt(D.files[i])])} />} />
 
         <footer className="max-w-[76ch] space-y-1.5 border-t border-grid pt-4 text-xs text-muted">
           {[L.footAuthor, L.footMethod, L.footBuilds, L.footFeatures, L.footProxy].map((p) => {

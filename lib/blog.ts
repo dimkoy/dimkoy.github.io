@@ -23,6 +23,7 @@ export type Post = Frontmatter & {
   locale: Locale;
   /** raw MDX body without frontmatter */
   body: string;
+  words: number;
   readingMinutes: number;
 };
 
@@ -39,7 +40,7 @@ async function readPost(slug: string, locale: Locale): Promise<Post> {
   if (!parsed.success) throw new Error(`Invalid frontmatter in ${file}: ${parsed.error.message}`);
   if (parsed.data.lang !== locale) throw new Error(`${file}: frontmatter lang "${parsed.data.lang}" does not match file name`);
   const words = content.replace(/```[\s\S]*?```/g, "").split(/\s+/).filter(Boolean).length;
-  return { ...parsed.data, slug, locale, body: content, readingMinutes: Math.max(1, Math.round(words / 200)) };
+  return { ...parsed.data, slug, locale, body: content, words, readingMinutes: Math.max(1, Math.round(words / 200)) };
 }
 
 export async function getPostSlugs(): Promise<string[]> {

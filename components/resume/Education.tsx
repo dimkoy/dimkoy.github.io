@@ -6,7 +6,7 @@ export function Education({ items, languages, languagesTitle }: { items: Resume[
       <ul className="space-y-4">
         {items.map((e) => (
           <li key={e.school} className="grid gap-1 sm:grid-cols-[7.5rem_1fr] sm:gap-6">
-            <div className="text-sm text-muted tnum">{e.year}</div>
+            <div className="text-sm text-muted tnum"><time dateTime={e.year}>{e.year}</time></div>
             <div>
               <div className="font-medium">{e.school}</div>
               <div className="text-sm text-ink2">{e.degree} · {e.field}</div>

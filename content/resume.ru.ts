@@ -3,10 +3,21 @@ import type { Resume } from "./types";
 export const resumeRu: Resume = {
   name: "Дмитрий Червяков",
   title: "Senior iOS Developer",
+  headline: "Senior iOS-разработчик · Swift, SwiftUI · Барселона",
+  seoDescription: "Senior iOS-разработчик в Барселоне, 9+ лет в Swift, SwiftUI и TCA. Финтех-приложения на 400K MAU с 99% crash-free, инвест-приложение #1 по Digital Investment Rank 2024 (Markswebb) и GrowDiaries — соцсеть, написанная в одиночку с нуля до App Store.",
   location: "Барселона, Испания",
+  photoAlt: "Дмитрий Червяков, Senior iOS-разработчик",
   summary: [
     "Senior iOS-разработчик с опытом 9+ лет в создании масштабируемых и производительных мобильных приложений. Глубокая экспертиза в Swift и SwiftUI, фокус на архитектуре, стабильности и продуктивности разработки.",
     "Руководил под-командой из 10 инженеров в крупных продуктах, обеспечив 99% crash-free сессий для приложений с 400K MAU. Сейчас сосредоточен на AI-driven процессах разработки, которые кратно ускоряют инженерную работу без потери качества.",
+  ],
+  facts: [
+    { value: "9+ лет", label: "в iOS-разработке, с 2017 года" },
+    { value: "400K MAU", label: "финтех-приложения Альфа-Банка" },
+    { value: "99%", label: "crash-free сессий на большом масштабе" },
+    { value: "#1", label: "инвест-приложение — Digital Investment Rank 2024, Markswebb" },
+    { value: "86 тыс. строк · 90 фич", label: "GrowDiaries, написано в одиночку, в App Store" },
+    { value: "+48%", label: "delivery cadence с AI-driven workflow" },
   ],
   experience: [
     {

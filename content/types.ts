@@ -15,7 +15,7 @@ export type ProjectLink = {
 export type Media =
   | { type: "image"; src: string; alt: Localized; width: number; height: number }
   | { type: "video"; src: string; poster?: string; alt: Localized; width: number; height: number }
-  | { type: "youtube"; id: string; alt: Localized };
+  | { type: "youtube"; id: string; alt: Localized; /** ISO date the video was published (VideoObject.uploadDate) */ uploadDate?: string };
 
 export type Metric = { value: string; label: Localized; sub?: Localized };
 
@@ -26,10 +26,14 @@ export type Project = {
   kind: ProjectKind;
   featured: boolean;
   period: { start: string; end?: string };
+  /** ISO date of the last substantive edit of this project's content (sitemap lastmod) */
+  updated?: string;
   tech: string[];
   links: ProjectLink[];
   media: Media[];
   metrics?: Metric[];
+  /** Awards or ratings the product received (used in structured data), English */
+  awards?: string[];
   i18n: Localized<{
     title: string;
     role: string;
@@ -54,11 +58,21 @@ export type Experience = {
   tech?: string[];
 };
 
+export type Fact = { value: string; label: string };
+
 export type Resume = {
   name: string;
   title: string;
+  /** Tail of the home <title>, e.g. "Senior iOS Developer · Swift, SwiftUI · Barcelona" */
+  headline: string;
+  /** Meta description of the home page (fact-dense, ~160–200 chars) */
+  seoDescription: string;
   location: string;
+  /** Alt text of the portrait */
+  photoAlt: string;
   summary: string[];
+  /** Key facts shown under the hero and repeated in structured data / llms.txt */
+  facts: Fact[];
   experience: Experience[];
   skills: { group: string; items: string[] }[];
   education: { school: string; degree: string; field: string; year: string; place: string }[];

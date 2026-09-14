@@ -3,10 +3,21 @@ import type { Resume } from "./types";
 export const resumeEn: Resume = {
   name: "Dmitrii Cherviakov",
   title: "Senior iOS Developer",
+  headline: "Senior iOS Developer · Swift, SwiftUI · Barcelona",
+  seoDescription: "Senior iOS Developer in Barcelona with 9+ years in Swift, SwiftUI and TCA. Fintech apps for 400K MAU at 99% crash-free, the #1-rated investment app (Markswebb 2024), and GrowDiaries — a social network built solo from zero to the App Store.",
   location: "Barcelona, Spain",
+  photoAlt: "Dmitrii Cherviakov, Senior iOS Developer",
   summary: [
     "Senior iOS Developer with 9+ years of experience building scalable, high-performance mobile applications. Strong expertise in Swift and SwiftUI, with a focus on architecture, stability and developer productivity.",
     "Led a sub-team of 10 engineers within large-scale products, achieving 99% crash-free sessions for apps with 400K MAU. Currently focused on AI-driven development workflows that multiply engineering velocity without compromising quality.",
+  ],
+  facts: [
+    { value: "9+ years", label: "of iOS engineering, since 2017" },
+    { value: "400K MAU", label: "fintech apps at Alfa-Bank" },
+    { value: "99%", label: "crash-free sessions at scale" },
+    { value: "#1", label: "investment app — Digital Investment Rank 2024 by Markswebb" },
+    { value: "86K lines · 90 features", label: "GrowDiaries, built solo, live in the App Store" },
+    { value: "+48%", label: "delivery cadence with an AI-driven workflow" },
   ],
   experience: [
     {

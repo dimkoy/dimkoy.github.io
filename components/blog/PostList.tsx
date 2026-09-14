@@ -5,7 +5,10 @@ import { localePath, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { t } from "@/lib/i18n/t";
 
-export function PostList({ posts, locale, dict }: { posts: Post[]; locale: Locale; dict: Dictionary }) {
+type Props = { posts: Post[]; locale: Locale; dict: Dictionary; /** h2 on index pages, h3 when nested under a section heading */ headingLevel?: "h2" | "h3" };
+
+export function PostList({ posts, locale, dict, headingLevel = "h3" }: Props) {
+  const H = headingLevel;
   if (!posts.length) return <p className="text-muted">{dict.blog.empty}</p>;
   return (
     <ul className="divide-y divide-line">
@@ -17,9 +20,9 @@ export function PostList({ posts, locale, dict }: { posts: Post[]; locale: Local
               <span>{t(dict.blog.readingTime, { n: p.readingMinutes })}</span>
               {p.draft && <span className="rounded bg-wash px-1 text-accent">draft</span>}
             </div>
-            <h3 className="mt-1 text-lg font-semibold">
+            <H className="mt-1 text-lg font-semibold">
               <Link href={localePath(locale, `/blog/${p.slug}`)} className="hover:text-accent">{p.title}</Link>
-            </h3>
+            </H>
             <p className="mt-1 text-sm text-ink2">{p.description}</p>
             {p.tags.length > 0 && (
               <p className="mt-2 flex flex-wrap gap-1.5">{p.tags.map((tag) => <span key={tag} className="rounded-md border border-line px-1.5 py-0.5 text-xs text-muted">#{tag}</span>)}</p>

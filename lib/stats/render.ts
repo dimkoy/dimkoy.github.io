@@ -103,7 +103,7 @@ export function mountDevStats(root: HTMLElement, D: StatsData, FEATS: Feature[][
   function frame(container: HTMLElement, H: number, maxY: number, tickFmt: (v: number) => string, band = false) {
     const W = Math.max(container.clientWidth, 280);
     container.innerHTML = "";
-    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" }, container);
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, "aria-hidden": "false" }, container);
     const iw = W - PAD.l - PAD.r;
     const ih = H - PAD.t - PAD.b;
     const step = niceStep(maxY);

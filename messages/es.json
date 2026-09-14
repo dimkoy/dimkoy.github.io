@@ -1,5 +1,10 @@
 {
-  "nav": { "resume": "Currículum", "projects": "Proyectos", "blog": "Blog", "stats": "Estadísticas" },
+  "nav": {
+    "resume": "Currículum",
+    "projects": "Proyectos",
+    "blog": "Blog",
+    "stats": "Estadísticas"
+  },
   "actions": {
     "downloadCv": "Descargar CV",
     "email": "Escribir",
@@ -28,12 +33,18 @@
     "productivity": "Crecimiento de la productividad, año tras año",
     "productivityNote": "Dos ventanas idénticas de seis meses sobre la base de código de GrowDiaries: {base} frente a {last}. Todas las métricas medidas crecieron tras implantar el flujo de trabajo impulsado por IA.",
     "present": "actualidad",
-    "was": "antes"
+    "was": "antes",
+    "facts": "Datos clave",
+    "photo": "Foto"
   },
   "projects": {
     "title": "Proyectos",
     "description": "Productos que he publicado, código open source y charlas.",
-    "kinds": { "product": "Producto", "opensource": "Open source", "talk": "Charla" },
+    "kinds": {
+      "product": "Producto",
+      "opensource": "Open source",
+      "talk": "Charla"
+    },
     "role": "Rol",
     "period": "Periodo",
     "stack": "Stack",
@@ -48,7 +59,8 @@
     "published": "Publicado",
     "updated": "Actualizado",
     "tags": "Etiquetas",
-    "empty": "Todavía no hay artículos."
+    "empty": "Todavía no hay artículos.",
+    "by": "Por"
   },
   "stats": {
     "title": "Estadísticas de desarrollo",
@@ -112,9 +124,22 @@
     "footMethod": "Metodología. Fuente: el historial git de la rama main. Solo se cuentan archivos *.swift; se excluyen el Localizable.xcstrings generado (77k líneas de JSON), los assets y los archivos de proyecto. La curva acumulada se construye a partir de git log --numstat y se contrasta con un recuento exacto de líneas al final de cada mes: 0,3 % de discrepancia.",
     "footBuilds": "Builds. El proyecto sigue trunk-based development: cada commit sin merge en main es una build entregable con una funcionalidad o una corrección, así que el número de builds equivale a la delivery cadence.",
     "footFeatures": "Funcionalidades. Un ticket cuenta como funcionalidad cuando al menos uno de sus commits no es una corrección; su tamaño es el total de líneas añadidas en los commits del ticket, atribuido al mes en que se escribió la mayor parte del código. Se omiten los identificadores de tickets.",
-    "footProxy": "Las líneas de código son una métrica indirecta, sensible al estilo y a los refactors. Por eso se muestran junto a los recuentos de builds y funcionalidades: la conclusión sobre el crecimiento se apoya en más de una señal."
+    "footProxy": "Las líneas de código son una métrica indirecta, sensible al estilo y a los refactors. Por eso se muestran junto a los recuentos de builds y funcionalidades: la conclusión sobre el crecimiento se apoya en más de una señal.",
+    "chartAria": "Gráfico: {title}. Los mismos datos están disponibles en la tabla de abajo."
   },
-  "theme": { "label": "Tema", "system": "Sistema", "light": "Claro", "dark": "Oscuro" },
-  "footer": { "built": "Hecho con Next.js, alojado en GitHub Pages.", "source": "Código fuente" },
-  "notFound": { "title": "Página no encontrada", "text": "La página que buscas no existe.", "home": "Ir a la página principal" }
+  "theme": {
+    "label": "Tema",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Oscuro"
+  },
+  "footer": {
+    "built": "Hecho con Next.js, alojado en GitHub Pages.",
+    "source": "Código fuente"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "text": "La página que buscas no existe.",
+    "home": "Ir a la página principal"
+  }
 }

@@ -17,8 +17,8 @@ import { formatMonth } from "@/lib/format";
 import { isLocale, localePath } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { t } from "@/lib/i18n/t";
-import { personJsonLd, websiteJsonLd } from "@/lib/jsonld";
-import { buildMetadata } from "@/lib/seo";
+import { graph, profilePageJsonLd, websiteJsonLd } from "@/lib/jsonld";
+import { buildMetadata, homeTitle } from "@/lib/seo";
 import { site } from "@/lib/site";
 import { YOY_WINDOWS } from "@/content/stats/growdiaries";
 
@@ -29,8 +29,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isLocale(locale)) return {};
   const resume = getResume(locale);
   return {
-    ...buildMetadata({ locale, path: "/", description: resume.summary[0] }),
-    title: { absolute: `${site.name} — ${resume.title}` },
+    ...buildMetadata({ locale, path: "/", description: resume.seoDescription, imageAlt: resume.photoAlt }),
+    title: { absolute: homeTitle(locale) },
   };
 }
 
@@ -44,8 +44,7 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <main>
-      <JsonLd data={personJsonLd} />
-      <JsonLd data={websiteJsonLd} />
+      <JsonLd data={graph(profilePageJsonLd(locale), websiteJsonLd(locale))} />
       <Hero resume={resume} dict={dict} />
 
       <Section id="productivity" title={dict.home.productivity}>
@@ -89,12 +88,14 @@ export default async function HomePage({ params }: Props) {
       )}
 
       <Section id="contacts" title={dict.home.contacts}>
-        <ul className="space-y-1 text-[15px]">
-          <li><a href={`mailto:${site.email}`} className="text-accent hover:underline">{site.email}</a></li>
-          <li><a href={site.linkedin} target="_blank" rel="me noopener" className="text-accent hover:underline">linkedin.com/in/dmitrii-cherviakov</a></li>
-          <li><a href={site.github} target="_blank" rel="me noopener" className="text-accent hover:underline">github.com/dimkoy</a></li>
-          <li className="text-ink2">{resume.location}</li>
-        </ul>
+        <address className="not-italic">
+          <ul className="space-y-1 text-[15px]">
+            <li><a href={`mailto:${site.email}`} className="text-accent hover:underline">{site.email}</a></li>
+            <li><a href={site.linkedin} target="_blank" rel="me noopener" className="text-accent hover:underline">linkedin.com/in/dmitrii-cherviakov</a></li>
+            <li><a href={site.github} target="_blank" rel="me noopener" className="text-accent hover:underline">github.com/dimkoy</a></li>
+            <li className="text-ink2">{resume.location}</li>
+          </ul>
+        </address>
       </Section>
     </main>
   );

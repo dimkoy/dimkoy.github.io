@@ -8,6 +8,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { formatPeriod } from "@/lib/format";
 import { isLocale, localePath, locales } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
+import { absUrl, breadcrumbJsonLd, graph, personRef, WEBSITE_ID, type Node } from "@/lib/jsonld";
 import { buildMetadata } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
@@ -34,11 +35,64 @@ export default async function ProjectPage({ params }: Props) {
   const dict = getDictionary(locale);
   const p = project.i18n[locale];
 
-  const jsonLd = project.kind === "product"
-    ? { "@context": "https://schema.org", "@type": "SoftwareApplication", name: p.title, applicationCategory: "MobileApplication", operatingSystem: "iOS", description: p.tagline, installUrl: project.links.find((l) => l.kind === "appstore")?.url, author: { "@id": `${SITE_URL}/#person` } }
+  const url = absUrl(locale, `/projects/${slug}`);
+  const description = [p.tagline, ...p.description].join(" ");
+  const me = personRef(locale);
+  const images = project.media.filter((m) => m.type === "image").map((m) => `${SITE_URL}${m.src}`);
+  const videos = project.media.flatMap((m) => m.type === "youtube" ? [{
+    "@type": "VideoObject",
+    name: p.title,
+    description: p.tagline,
+    thumbnailUrl: `https://img.youtube.com/vi/${m.id}/maxresdefault.jpg`,
+    embedUrl: `https://www.youtube-nocookie.com/embed/${m.id}`,
+    contentUrl: `https://www.youtube.com/watch?v=${m.id}`,
+    uploadDate: m.uploadDate ?? `${project.period.start}-01`,
+    inLanguage: "ru",
+  }] : []);
+  const common = { name: p.title, description, url, inLanguage: locale, keywords: project.tech.join(", "), isPartOf: { "@id": WEBSITE_ID } };
+  const entity: Node = project.kind === "product"
+    ? {
+        "@type": "SoftwareApplication",
+        "@id": `${url}#app`,
+        ...common,
+        applicationCategory: "MobileApplication",
+        operatingSystem: "iOS",
+        installUrl: project.links.find((l) => l.kind === "appstore")?.url,
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        datePublished: `${project.period.start}-01`,
+        ...(images.length ? { screenshot: images } : {}),
+        ...(project.awards ? { award: project.awards } : {}),
+        ...(project.slug === "growdiaries" ? { author: me, creator: me } : { contributor: me }),
+      }
     : project.kind === "talk"
-      ? { "@context": "https://schema.org", "@type": "Event", name: p.title, startDate: project.period.start, performer: { "@id": `${SITE_URL}/#person` }, url: project.links[0]?.url }
-      : { "@context": "https://schema.org", "@type": "SoftwareSourceCode", name: p.title, codeRepository: project.links.find((l) => l.kind === "github")?.url, programmingLanguage: "Swift", author: { "@id": `${SITE_URL}/#person` } };
+      ? {
+          "@type": "Event",
+          "@id": `${url}#event`,
+          ...common,
+          startDate: project.period.start,
+          endDate: project.period.end ?? project.period.start,
+          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+          eventStatus: "https://schema.org/EventScheduled",
+          location: { "@type": "Place", name: "GrindConf 2019", address: { "@type": "PostalAddress", addressLocality: "Samara", addressCountry: "RU" } },
+          organizer: { "@type": "Organization", name: "Samara IT Community", url: project.links.find((l) => l.kind === "talk")?.url },
+          performer: me,
+          ...(videos.length ? { recordedIn: videos[0] } : {}),
+          ...(project.media.length ? { image: `https://img.youtube.com/vi/${(project.media[0] as { id?: string }).id}/maxresdefault.jpg` } : {}),
+        }
+      : {
+          "@type": "SoftwareSourceCode",
+          "@id": `${url}#code`,
+          ...common,
+          codeRepository: project.links.find((l) => l.kind === "github")?.url,
+          programmingLanguage: { "@type": "ComputerLanguage", name: "Swift" },
+          runtimePlatform: "iOS",
+          dateCreated: `${project.period.start}-01`,
+          author: me,
+        };
+  const jsonLd = graph(
+    breadcrumbJsonLd(locale, [{ name: dict.nav.resume, path: "/" }, { name: dict.projects.title, path: "/projects" }, { name: p.title, path: `/projects/${slug}` }]),
+    entity,
+  );
 
   return (
     <main className="py-10">

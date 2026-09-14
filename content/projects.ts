@@ -83,6 +83,7 @@ export const projects: Project[] = [
     tech: ["Swift", "SwiftUI", "UIKit", "MVVM", "SnapKit", "Design system", "DDD"],
     links: [],
     media: [],
+    awards: ["#1 investment app — Digital Investment Rank 2024 by Markswebb"],
     metrics: [
       { value: "400K", label: { en: "monthly active users", ru: "активных пользователей в месяц", es: "usuarios activos mensuales" } },
       { value: "99%", label: { en: "crash-free sessions", ru: "crash-free сессий", es: "sesiones sin crashes" } },
@@ -226,7 +227,7 @@ export const projects: Project[] = [
       { kind: "web", url: "https://www.youtube.com/watch?v=ZTHEfcFS0LY", label: { en: "Watch on YouTube", ru: "Смотреть на YouTube", es: "Ver en YouTube" } },
       { kind: "talk", url: "https://samara-it-community.timepad.ru/event/884210/" },
     ],
-    media: [{ type: "youtube", id: "ZTHEfcFS0LY", alt: { en: "Talk recording", ru: "Запись доклада", es: "Grabación de la charla" } }],
+    media: [{ type: "youtube", id: "ZTHEfcFS0LY", uploadDate: "2019-02-03", alt: { en: "Talk recording", ru: "Запись доклада", es: "Grabación de la charla" } }],
     i18n: {
       en: {
         title: "iOS Application Architectures — GrindConf 2019",

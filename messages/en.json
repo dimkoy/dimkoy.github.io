@@ -1,5 +1,10 @@
 {
-  "nav": { "resume": "Resume", "projects": "Projects", "blog": "Blog", "stats": "Stats" },
+  "nav": {
+    "resume": "Resume",
+    "projects": "Projects",
+    "blog": "Blog",
+    "stats": "Stats"
+  },
   "actions": {
     "downloadCv": "Download CV",
     "email": "Email",
@@ -28,12 +33,18 @@
     "productivity": "Productivity growth, year over year",
     "productivityNote": "Two identical six-month windows on the GrowDiaries codebase: {base} vs {last}. Every measured metric grew after the AI-driven workflow was put in place.",
     "present": "present",
-    "was": "was"
+    "was": "was",
+    "facts": "Key facts",
+    "photo": "Photo"
   },
   "projects": {
     "title": "Projects",
     "description": "Products I shipped, open-source code and talks.",
-    "kinds": { "product": "Product", "opensource": "Open source", "talk": "Talk" },
+    "kinds": {
+      "product": "Product",
+      "opensource": "Open source",
+      "talk": "Talk"
+    },
     "role": "Role",
     "period": "Period",
     "stack": "Stack",
@@ -48,7 +59,8 @@
     "published": "Published",
     "updated": "Updated",
     "tags": "Tags",
-    "empty": "No posts yet."
+    "empty": "No posts yet.",
+    "by": "By"
   },
   "stats": {
     "title": "Development stats",
@@ -112,9 +124,22 @@
     "footMethod": "Methodology. Source — the git history of the main branch. Only *.swift files are counted; the generated Localizable.xcstrings (77k lines of JSON), assets and project files are excluded. The cumulative curve is built from git log --numstat and cross-checked against an exact line count at the end of each month — 0.3% discrepancy.",
     "footBuilds": "Builds. The project follows trunk-based development: every non-merge commit to main is a shippable build carrying a feature or a fix, so build counts double as delivery cadence.",
     "footFeatures": "Features. A ticket counts as a feature when at least one of its commits is not a fix; its size is the total lines added across the ticket's commits, attributed to the month where most of that code was written. Ticket IDs are omitted.",
-    "footProxy": "Lines of code are a proxy metric — sensitive to style and refactoring. That's why build counts and feature counts are shown alongside: the growth conclusion rests on more than one signal."
+    "footProxy": "Lines of code are a proxy metric — sensitive to style and refactoring. That's why build counts and feature counts are shown alongside: the growth conclusion rests on more than one signal.",
+    "chartAria": "Chart: {title}. The same data is available in the table below."
   },
-  "theme": { "label": "Theme", "system": "System", "light": "Light", "dark": "Dark" },
-  "footer": { "built": "Built with Next.js, deployed on GitHub Pages.", "source": "Source" },
-  "notFound": { "title": "Page not found", "text": "The page you're looking for doesn't exist.", "home": "Go to homepage" }
+  "theme": {
+    "label": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "footer": {
+    "built": "Built with Next.js, deployed on GitHub Pages.",
+    "source": "Source"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "The page you're looking for doesn't exist.",
+    "home": "Go to homepage"
+  }
 }

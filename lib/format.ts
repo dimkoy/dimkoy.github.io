@@ -39,13 +39,28 @@ export function formatNumber(n: number, locale: Locale): string {
  * "2021 – 2025", "2025 – present"; roles within one year show months: "Aug – Oct 2021", "Feb 2019".
  */
 export function formatPeriod(start: string, end: string | undefined, present: string, locale: Locale = "en"): string {
+  const p = formatPeriodParts(start, end, present, locale);
+  return p.end === undefined ? p.start : `${p.start} – ${p.end}`;
+}
+
+export type PeriodParts = {
+  /** Visible label of the start (or the whole period when it collapses to one label) */
+  start: string;
+  /** Visible label of the end; `present` for open-ended roles; undefined when the period is a single label */
+  end?: string;
+  /** True when `end` is the "present" word rather than a date */
+  open: boolean;
+};
+
+/** Same labels as formatPeriod, split so that each half can be wrapped in its own <time>. */
+export function formatPeriodParts(start: string, end: string | undefined, present: string, locale: Locale = "en"): PeriodParts {
   const y1 = start.slice(0, 4);
-  if (!end) return `${y1} – ${present}`;
+  if (!end) return { start: y1, end: present, open: true };
   const y2 = end.slice(0, 4);
-  if (y1 !== y2) return `${y1} – ${y2}`;
+  if (y1 !== y2) return { start: y1, end: y2, open: false };
   const hasMonths = start.length >= 7 && end.length >= 7;
-  if (!hasMonths) return y1;
+  if (!hasMonths) return { start: y1, open: false };
   const m1 = shortMonth(start, locale);
   const m2 = shortMonth(end, locale);
-  return m1 === m2 ? `${m1} ${y1}` : `${m1} – ${m2} ${y1}`;
+  return m1 === m2 ? { start: `${m1} ${y1}`, open: false } : { start: m1, end: `${m2} ${y1}`, open: false };
 }

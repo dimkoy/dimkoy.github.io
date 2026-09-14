@@ -27,6 +27,7 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      - run: npm run check:seo
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
@@ -41,3 +42,18 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+      # IndexNow: tell Bing (which also feeds ChatGPT Search), Yandex, Naver and Seznam which URLs changed.
+      # The key is public by protocol design and is served from https://dmitriicherviakov.com/<key>.txt.
+      - name: Notify IndexNow
+        continue-on-error: true
+        env:
+          HOST: dmitriicherviakov.com
+          INDEXNOW_KEY: b513204032d36990bc9f5db54b93019a
+        run: |
+          sleep 30
+          URLS=$(curl -sfL "https://$HOST/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | sed 's/<[^>]*>//g' | jq -R . | jq -s .)
+          jq -n --arg host "$HOST" --arg key "$INDEXNOW_KEY" --argjson urls "$URLS" \
+            '{host:$host, key:$key, keyLocation:("https://"+$host+"/"+$key+".txt"), urlList:$urls}' > body.json
+          echo "Submitting $(jq '.urlList|length' body.json) URLs"
+          curl -sS -o /dev/null -w "IndexNow HTTP %{http_code}\n" -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json; charset=utf-8" --data @body.json

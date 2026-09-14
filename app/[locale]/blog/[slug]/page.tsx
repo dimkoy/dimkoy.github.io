@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { getResume } from "@/content/resume";
 import { getAllPosts, getPost } from "@/lib/blog";
 import { formatDate } from "@/lib/format";
 import { isLocale, localePath, locales } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { t } from "@/lib/i18n/t";
+import { absUrl, breadcrumbJsonLd, graph, PERSON_ID, personRef, WEBSITE_ID } from "@/lib/jsonld";
 import { renderMdx } from "@/lib/mdx";
 import { buildMetadata } from "@/lib/seo";
 import { SITE_URL, site } from "@/lib/site";
@@ -45,19 +47,31 @@ export default async function PostPage({ params }: Props) {
   const dict = getDictionary(locale);
   const content = await renderMdx(post.body);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.description,
-    datePublished: post.date,
-    dateModified: post.updated ?? post.date,
-    inLanguage: locale,
-    keywords: post.tags.join(", "),
-    url: `${SITE_URL}${localePath(locale, `/blog/${slug}`)}`,
-    image: `${SITE_URL}${post.cover ?? site.ogImage}`,
-    author: { "@type": "Person", "@id": `${SITE_URL}/#person`, name: site.name },
-  };
+  const resume = getResume(locale);
+  const url = absUrl(locale, `/blog/${slug}`);
+  const jsonLd = graph(
+    breadcrumbJsonLd(locale, [{ name: dict.nav.resume, path: "/" }, { name: dict.blog.title, path: "/blog" }, { name: post.title, path: `/blog/${slug}` }]),
+    {
+      "@type": "BlogPosting",
+      "@id": `${url}#article`,
+      mainEntityOfPage: { "@type": "WebPage", "@id": url },
+      url,
+      headline: post.title,
+      description: post.description,
+      datePublished: post.date,
+      dateModified: post.updated ?? post.date,
+      inLanguage: locale,
+      keywords: post.tags.join(", "),
+      articleSection: post.tags,
+      wordCount: post.words,
+      timeRequired: `PT${post.readingMinutes}M`,
+      isAccessibleForFree: true,
+      image: `${SITE_URL}${post.cover ?? site.ogImage}`,
+      author: personRef(locale),
+      publisher: { "@id": PERSON_ID },
+      isPartOf: { "@id": WEBSITE_ID },
+    },
+  );
 
   return (
     <main className="py-10">
@@ -73,6 +87,10 @@ export default async function PostPage({ params }: Props) {
           {post.draft && <p className="mt-2 inline-block rounded bg-wash px-2 py-0.5 text-xs font-medium text-accent">draft</p>}
           <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl text-balance">{post.title}</h1>
           <p className="mt-3 text-lg text-ink2">{post.description}</p>
+          <p className="mt-3 text-sm text-ink2">
+            {dict.blog.by} <Link href={localePath(locale, "/")} rel="author" className="font-medium text-ink hover:text-accent">{resume.name}</Link>
+            <span className="text-muted"> · {resume.title}</span>
+          </p>
         </header>
         <div className="prose prose-neutral mt-8 max-w-none">{content}</div>
         {post.tags.length > 0 && (

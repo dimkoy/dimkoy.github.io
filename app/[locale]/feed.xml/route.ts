@@ -2,6 +2,7 @@ import { Feed } from "feed";
 import { getAllPosts } from "@/lib/blog";
 import { isLocale, localePath, locales } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
+import { markdownToHtml, mdxToMarkdown } from "@/lib/markdown";
 import { SITE_URL, site } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -33,10 +34,11 @@ export async function GET(_req: Request, { params }: { params: Promise<{ locale:
       link: url,
       title: p.title,
       description: p.description,
+      content: await markdownToHtml(mdxToMarkdown(p.body, locale)),
       date: new Date(p.updated ?? p.date),
       published: new Date(p.date),
       category: p.tags.map((name) => ({ name })),
-      author: [{ name: site.name, email: site.email }],
+      author: [{ name: site.name, email: site.email, link: base }],
     });
   }
   return new Response(feed.rss2(), { headers: { "Content-Type": "application/rss+xml; charset=utf-8" } });

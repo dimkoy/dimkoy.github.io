@@ -3,10 +3,21 @@ import type { Resume } from "./types";
 export const resumeEs: Resume = {
   name: "Dmitrii Cherviakov",
   title: "Senior iOS Developer",
+  headline: "Desarrollador iOS sénior · Swift, SwiftUI · Barcelona",
+  seoDescription: "Desarrollador iOS sénior en Barcelona con más de 9 años en Swift, SwiftUI y TCA. Apps fintech para 400K MAU con un 99 % sin crashes, la app de inversión n.º 1 (Markswebb 2024) y GrowDiaries, una red social construida en solitario de cero a la App Store.",
   location: "Barcelona, España",
+  photoAlt: "Dmitrii Cherviakov, desarrollador iOS sénior",
   summary: [
     "Desarrollador iOS sénior con más de 9 años de experiencia creando aplicaciones móviles escalables y de alto rendimiento. Amplia experiencia en Swift y SwiftUI, con foco en arquitectura, estabilidad y productividad del equipo.",
     "Lideré un subequipo de 10 ingenieros en productos a gran escala, logrando un 99 % de sesiones sin crashes en apps con 400K usuarios activos mensuales. Actualmente centrado en flujos de desarrollo impulsados por IA que multiplican la velocidad de ingeniería sin sacrificar calidad.",
+  ],
+  facts: [
+    { value: "9+ años", label: "de ingeniería iOS, desde 2017" },
+    { value: "400K MAU", label: "apps fintech en Alfa-Bank" },
+    { value: "99 %", label: "sesiones sin crashes a gran escala" },
+    { value: "#1", label: "app de inversión — Digital Investment Rank 2024, Markswebb" },
+    { value: "86K líneas · 90 funcionalidades", label: "GrowDiaries, construida en solitario, en la App Store" },
+    { value: "+48 %", label: "delivery cadence con un flujo impulsado por IA" },
   ],
   experience: [
     {
