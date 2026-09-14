@@ -2,7 +2,7 @@
 
 Personal site of Dmitrii Cherviakov — Senior iOS Developer. Resume, projects, blog and development stats, in English and Russian.
 
-Live: https://dimkoy.github.io
+Live: https://dmitriicherviakov.com (GitHub Pages, custom domain via Cloudflare DNS)
 
 ## Stack
 

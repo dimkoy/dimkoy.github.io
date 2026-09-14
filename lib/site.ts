@@ -1,4 +1,4 @@
-export const SITE_URL = "https://dimkoy.github.io";
+export const SITE_URL = "https://dmitriicherviakov.com";
 
 export const site = {
   name: "Dmitrii Cherviakov",

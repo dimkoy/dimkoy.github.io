@@ -15,7 +15,7 @@ await render(
   <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 72, background: bg, color: ink, fontFamily: "sans-serif" }}>
     <div style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 26, color: muted, letterSpacing: 2 }}>
       <div style={{ width: 18, height: 18, borderRadius: 9, background: accent }} />
-      DIMKOY.GITHUB.IO
+      DMITRIICHERVIAKOV.COM
     </div>
     <div style={{ display: "flex", flexDirection: "column" }}>
       <div style={{ fontSize: 88, fontWeight: 700, letterSpacing: -2, lineHeight: 1.05 }}>Dmitrii Cherviakov</div>
