@@ -1,14 +1,8 @@
 import type { Media } from "@/content/types";
 import type { Locale } from "@/lib/i18n/config";
 
-export function MediaGallery({ media, locale, placeholder }: { media: Media[]; locale: Locale; placeholder: string }) {
-  if (!media.length) {
-    return (
-      <div className="flex min-h-40 items-center justify-center rounded-xl border border-dashed border-axis bg-surface p-6 text-center text-sm text-muted">
-        {placeholder}
-      </div>
-    );
-  }
+export function MediaGallery({ media, locale }: { media: Media[]; locale: Locale }) {
+  if (!media.length) return null;
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       {media.map((m, i) => {

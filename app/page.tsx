@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/en/` },
 };
 
-const redirectScript = `(function(){try{var s=localStorage.getItem("locale");var l=s||navigator.language||"";location.replace(/^ru/i.test(l)?"/ru/":"/en/")}catch(e){location.replace("/en/")}})();`;
+const redirectScript = `(function(){try{var s=localStorage.getItem("locale");var l=s||navigator.language||"";location.replace(/^es/i.test(l)?"/es/":/^ru/i.test(l)?"/ru/":"/en/")}catch(e){location.replace("/en/")}})();`;
 
 /** "/" → picks a locale on the client; meta refresh is the no-JS fallback. */
 export default function RootRedirect() {
@@ -20,7 +20,7 @@ export default function RootRedirect() {
       <body style={{ fontFamily: "system-ui, sans-serif", padding: "2rem" }}>
         {/* Plain anchors on purpose: this document must work without any client JS. */}
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-        <p><a href="/en/">English</a> · <a href="/ru/">Русский</a></p>
+        <p><a href="/en/">English</a> · <a href="/ru/">Русский</a> · <a href="/es/">Español</a></p>
       </body>
     </html>
   );

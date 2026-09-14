@@ -35,7 +35,7 @@ export default async function ProjectPage({ params }: Props) {
   const p = project.i18n[locale];
 
   const jsonLd = project.kind === "product"
-    ? { "@context": "https://schema.org", "@type": "SoftwareApplication", name: p.title, applicationCategory: "MobileApplication", operatingSystem: "iOS", description: p.tagline, author: { "@id": `${SITE_URL}/#person` } }
+    ? { "@context": "https://schema.org", "@type": "SoftwareApplication", name: p.title, applicationCategory: "MobileApplication", operatingSystem: "iOS", description: p.tagline, installUrl: project.links.find((l) => l.kind === "appstore")?.url, author: { "@id": `${SITE_URL}/#person` } }
     : project.kind === "talk"
       ? { "@context": "https://schema.org", "@type": "Event", name: p.title, startDate: project.period.start, performer: { "@id": `${SITE_URL}/#person` }, url: project.links[0]?.url }
       : { "@context": "https://schema.org", "@type": "SoftwareSourceCode", name: p.title, codeRepository: project.links.find((l) => l.kind === "github")?.url, programmingLanguage: "Swift", author: { "@id": `${SITE_URL}/#person` } };
@@ -45,7 +45,7 @@ export default async function ProjectPage({ params }: Props) {
       <JsonLd data={jsonLd} />
       <p className="text-sm"><Link href={localePath(locale, "/projects")} className="text-muted hover:text-ink">← {dict.actions.backToProjects}</Link></p>
       <p className="mt-6 text-xs uppercase tracking-wider text-muted">
-        {dict.projects.kinds[project.kind]} · <span className="tnum">{formatPeriod(project.period.start, project.period.end, dict.home.present)}</span>
+        {dict.projects.kinds[project.kind]} · <span className="tnum">{formatPeriod(project.period.start, project.period.end, dict.home.present, locale)}</span>
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{p.title}</h1>
       <p className="mt-2 text-lg text-ink2">{p.tagline}</p>
@@ -71,8 +71,12 @@ export default async function ProjectPage({ params }: Props) {
           <ul className="mt-3 space-y-1.5 text-[15px] leading-relaxed text-ink2">
             {p.highlights.map((h) => <li key={h} className="flex gap-2"><span className="mt-[0.6em] h-1 w-1 flex-none rounded-full bg-axis" aria-hidden="true" />{h}</li>)}
           </ul>
-          <h2 className="mt-8 text-xs font-semibold uppercase tracking-wider text-muted">{dict.projects.media}</h2>
-          <div className="mt-3"><MediaGallery media={project.media} locale={locale} placeholder={dict.projects.mediaPlaceholder} /></div>
+          {project.media.length > 0 && (
+            <>
+              <h2 className="mt-8 text-xs font-semibold uppercase tracking-wider text-muted">{dict.projects.media}</h2>
+              <div className="mt-3"><MediaGallery media={project.media} locale={locale} /></div>
+            </>
+          )}
         </div>
         <aside className="space-y-5 text-sm">
           <div>

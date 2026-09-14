@@ -10,7 +10,7 @@ export function ProjectCard({ project, locale, dict }: { project: Project; local
     <Link href={localePath(locale, `/projects/${project.slug}`)} className="group flex flex-col rounded-xl border border-line bg-surface p-5 transition-colors hover:border-axis">
       <div className="flex items-center justify-between gap-3 text-xs text-muted">
         <span className="uppercase tracking-wider">{dict.projects.kinds[project.kind]}</span>
-        <span className="tnum">{formatPeriod(project.period.start, project.period.end, dict.home.present)}</span>
+        <span className="tnum">{formatPeriod(project.period.start, project.period.end, dict.home.present, locale)}</span>
       </div>
       <h3 className="mt-2 text-lg font-semibold group-hover:text-accent">{p.title}</h3>
       <p className="mt-1 text-sm text-ink2">{p.tagline}</p>

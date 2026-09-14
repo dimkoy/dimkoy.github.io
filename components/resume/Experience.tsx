@@ -11,7 +11,7 @@ export function Experience({ items, locale, dict }: { items: Exp[]; locale: Loca
         <li key={e.company} className="grid gap-1 sm:grid-cols-[7.5rem_1fr] sm:gap-6">
           <div className="text-sm text-muted tnum">
             {e.roles.map((r) => (
-              <div key={r.title}>{formatPeriod(r.start, r.end, dict.home.present)}</div>
+              <div key={r.title}>{formatPeriod(r.start, r.end, dict.home.present, locale)}</div>
             ))}
           </div>
           <div className="min-w-0">
@@ -21,9 +21,12 @@ export function Experience({ items, locale, dict }: { items: Exp[]; locale: Loca
             <p className="text-sm text-ink2">
               {e.projectSlug ? (
                 <Link href={localePath(locale, `/projects/${e.projectSlug}`)} className="text-accent hover:underline">{e.company}</Link>
+              ) : e.url ? (
+                <a href={e.url} target="_blank" rel="noopener" className="text-accent hover:underline">{e.company}</a>
               ) : e.company}
-              <span className="text-muted"> · {e.location}</span>
+              <span className="text-muted"> · {e.location}{e.type ? ` · ${e.type}` : ""}</span>
             </p>
+            {e.summary && <p className="mt-2 text-[15px] leading-relaxed text-ink2">{e.summary}</p>}
             <ul className="mt-3 space-y-1.5 text-[15px] leading-relaxed text-ink2">
               {e.highlights.map((h) => (
                 <li key={h} className="flex gap-2"><span className="mt-[0.6em] h-1 w-1 flex-none rounded-full bg-axis" aria-hidden="true" />{h}</li>

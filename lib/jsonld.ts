@@ -21,5 +21,5 @@ export const websiteJsonLd = {
   url: `${SITE_URL}/`,
   name: site.name,
   author: { "@id": `${SITE_URL}/#person` },
-  inLanguage: ["en", "ru"],
+  inLanguage: ["en", "ru", "es"],
 };

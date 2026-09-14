@@ -43,7 +43,13 @@ export type Experience = {
   company: string;
   roles: { title: string; start: string; end?: string }[];
   location: string;
+  /** Employment type shown next to the location, e.g. "Part-time" */
+  type?: string;
   projectSlug?: string;
+  /** External link for the company/product */
+  url?: string;
+  /** One-line context about the product or project */
+  summary?: string;
   highlights: string[];
   tech?: string[];
 };

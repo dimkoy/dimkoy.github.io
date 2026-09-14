@@ -6,7 +6,7 @@ import { locales, localeNames, type Locale } from "@/lib/i18n/config";
 
 export function LocaleSwitcher({ current }: { current: Locale }) {
   const pathname = usePathname() ?? `/${current}/`;
-  const rest = pathname.replace(/^\/(en|ru)(?=\/|$)/, "");
+  const rest = pathname.replace(new RegExp(`^/(${locales.join("|")})(?=/|$)`), "");
 
   return (
     <nav aria-label="Language" className="flex items-center rounded-md border border-line text-sm">

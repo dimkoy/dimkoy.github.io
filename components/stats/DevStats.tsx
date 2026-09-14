@@ -1,5 +1,5 @@
 import { FEATS, STATS, YOY_WINDOWS } from "@/content/stats/growdiaries";
-import { formatDate, formatMonth, formatNumber } from "@/lib/format";
+import { capitalize, formatDate, formatMonth, formatNumber } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import { t } from "@/lib/i18n/t";
@@ -88,15 +88,15 @@ export function DevStats({ locale, dict }: { locale: Locale; dict: Dictionary })
             <Tile lbl={L.featureThroughput} val={y.featureThroughput.now.toFixed(1)} delta={y.featureThroughput.delta} sub={`${L.featureThroughputSub} · ${dict.home.was} ${y.featureThroughput.was.toFixed(1)}`} />
           </div>
           <p className="mt-2 max-w-[72ch] text-sm text-ink2">
-            {t(L.recordNote, { month: mFull(best.month), lines: fmt(best.lines) })}
-            {D.partialLast && " " + t(L.partialNote, { month: mFull(D.months[N - 1]), date: formatDate(D.last, locale) })}
+            {t(L.recordNote, { month: capitalize(mFull(best.month)), lines: fmt(best.lines) })}
+            {D.partialLast && " " + t(L.partialNote, { month: capitalize(mFull(D.months[N - 1])), date: formatDate(D.last, locale) })}
           </p>
         </section>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Tile lbl={L.kpiBuilds} val={fmt(D.totals.commits)} sub={L.kpiBuildsSub} />
           <Tile lbl={L.kpiAvgCommit} val={fmt(D.totals.avg_commit_size)} sub={L.kpiAvgCommitSub} />
-          <Tile lbl={L.kpiBestMonth} val={mFull(best.month)} sub={t(L.kpiBestMonthSub, { lines: fmt(best.lines) })} />
+          <Tile lbl={L.kpiBestMonth} val={capitalize(mFull(best.month))} sub={t(L.kpiBestMonthSub, { lines: fmt(best.lines) })} />
           <Tile lbl={L.kpiStreak} val={t(L.kpiStreakVal, { days: D.streak.days })} sub={t(L.kpiStreakSub, { month: mFull(D.streak.end.slice(0, 7)) })} />
         </div>
 

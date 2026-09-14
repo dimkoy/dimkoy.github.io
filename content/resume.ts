@@ -1,9 +1,10 @@
 import type { Locale } from "@/lib/i18n/config";
 import { resumeEn } from "./resume.en";
 import { resumeRu } from "./resume.ru";
+import { resumeEs } from "./resume.es";
 import type { Resume } from "./types";
 
-const resumes: Record<Locale, Resume> = { en: resumeEn, ru: resumeRu };
+const resumes: Record<Locale, Resume> = { en: resumeEn, ru: resumeRu, es: resumeEs };
 
 export function getResume(locale: Locale): Resume {
   return resumes[locale];

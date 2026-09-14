@@ -1,4 +1,4 @@
-export const locales = ["en", "ru"] as const;
+export const locales = ["en", "ru", "es"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "en";
 
@@ -12,5 +12,5 @@ export function localePath(locale: Locale, path = "/"): string {
   return clean ? `/${locale}/${clean}/` : `/${locale}/`;
 }
 
-export const localeNames: Record<Locale, string> = { en: "English", ru: "Русский" };
-export const ogLocales: Record<Locale, string> = { en: "en_US", ru: "ru_RU" };
+export const localeNames: Record<Locale, string> = { en: "English", ru: "Русский", es: "Español" };
+export const ogLocales: Record<Locale, string> = { en: "en_US", ru: "ru_RU", es: "es_ES" };

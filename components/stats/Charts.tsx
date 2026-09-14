@@ -7,7 +7,7 @@ import { mountDevStats, type ChartLabels } from "@/lib/stats/render";
 
 type Props = { locale: Locale; labels: Omit<ChartLabels, "fmt" | "months" | "monthsFull">; children: React.ReactNode };
 
-const intl: Record<Locale, string> = { en: "en-US", ru: "ru-RU" };
+const intl: Record<Locale, string> = { en: "en-US", ru: "ru-RU", es: "es-ES" };
 
 function monthNames(locale: Locale, style: "short" | "long") {
   const f = new Intl.DateTimeFormat(intl[locale], { month: style, timeZone: "UTC" });
