@@ -1,37 +1,43 @@
 ---
-title: "How AI multiplied my speed as an iOS developer"
-description: "Same app, same single developer, two six-month windows: +81% code output, +47% delivery cadence, +38% feature throughput. What changed, and what didn't."
-date: "2026-09-15"
+title: "How much does AI really speed up development? I measured it"
+description: "Everyone asks how much faster AI makes me. Instead of an opinion, here are the numbers from 15 months on one iOS project: +81% code output, +48% delivery cadence, +38% feature throughput."
+date: "2026-09-14"
 tags: ["ai", "workflow", "swift", "productivity"]
 lang: "en"
-draft: true
+draft: false
 ---
 
-For fifteen months I have been the only iOS developer on [GrowDiaries](/en/projects/growdiaries/), a social network for growers written in pure SwiftUI and The Composable Architecture. Halfway through I rebuilt the way I work around AI agents. Because the whole history lives in one git repository and every commit to `main` is a shippable build, I can measure what that change did.
+Developers, managers from other companies, colleagues — the question I get asked most often this year is the same: *how much does AI actually speed you up?* I always had an answer, but it was a feeling. As a developer I clearly got faster. I wanted to check that feeling against numbers.
+
+I had a convenient setup for it. Over the last year I have been the only iOS developer on [GrowDiaries](/en/projects/growdiaries/), a social network for growers written in pure SwiftUI and The Composable Architecture. The project splits neatly into two halves: in the first I worked the way I always had, and in the second I gradually built an AI workflow around my development. Because the whole history lives in one git repository and every commit to `main` is a shippable build, the two halves can be compared directly.
+
+## The result
+
+Two identical six-month windows: **June–November 2025**, before the workflow, versus **February–July 2026**, with it. Same product, same architecture, same level of code review.
 
 <StatTiles locale="en" />
 
-Two identical six-month windows: **June–November 2025** versus **February–July 2026**. The team size in both windows is one. The product, the architecture and the review bar are the same. The difference is the workflow.
+My gut said "about one and a half times". The numbers came out even higher: delivery cadence grew by 48%, feature throughput by 38%, and raw code output by 81%. I honestly did not expect it to be that big.
 
-## What "AI-driven workflow" actually means here
+One caveat before the details. These numbers measure the part of the job that is writing code. Developers also spend a lot of time discussing features, planning and coordinating, and how much of your week that takes depends entirely on the company. On this project I could dedicate myself almost fully to development, so what you see here is mostly the speed-up of *building* features, not of everything a developer does.
 
-It is not autocomplete. The setup has three layers, and each one exists because the previous one alone was not enough.
+## What the workflow looks like
 
-### 1. Agentic coding pipelines
+Like most developers, I started by chatting with ChatGPT, and as agentic coding appeared I brought it into my work step by step. Over time I learned what my harness is good at and where it fails — and most of my effort went into one thing: closing the feedback loop. Not the prompt, not the generation, but the last part: testing the code the agent produces.
 
-A feature starts as a ticket. I write a short spec — what the screen does, which TCA feature owns the state, what the edge cases are — and hand it to an agent that has the full repository, the project conventions and a set of skills describing how I build TCA features. The agent works through the ticket: reducer, view, dependencies, tests. I review the diff the way I would review a teammate's pull request.
+### The feedback loop
 
-{/* TODO: concrete example — one ticket from spec to merged build, with the actual prompt and the time it took */}
+The best decision I made early on was choosing TCA as the architecture. It is built around testability, and that turned out to matter far more with an agent than with a human on the keyboard.
 
-### 2. Automated verification loops
+I started where it was cheapest — generating unit tests. That covers the business logic, but only the business logic. So I moved further and made the agent run full autotests: after finishing a feature it verifies the feature itself. I wrote guidelines for deriving test cases from my original specification, so every ticket comes with its own checklist. And the final step of every ticket is the agent running the feature in the simulator and walking through those cases.
 
-The first version of the pipeline produced code that compiled and looked right, and then broke on the simulator. So the loop was closed: after the agent finishes, it builds the app, runs the unit tests, launches the feature on the simulator and drives it through the scenario from the spec. If something fails, it goes back and fixes it before I ever see the diff. Most of my review time now goes to design decisions, not to "does this run".
+Getting this loop right took real work and taught me a lot about how to structure testing for an agent. But it is exactly what raised the quality of the generated code — and higher quality of the first draft is what turned into faster delivery. It also changed how I think about architecture: I now value tests and an agent-friendly structure even more, because they are the fastest way to catch mistakes and hallucinations before they cost anything.
 
-{/* TODO: describe the simulator-driven UI check and one bug it caught before review */}
+### Getting the data in
 
-### 3. Testing guardrails
+The input side was surprisingly simple to set up with MCP. Documentation is pulled in from where it lives, and the Figma MCP gives the agent the full design specification of a screen, down to spacing and colors.
 
-Speed without guardrails just moves the bugs downstream. Every build goes through Xcode Cloud with unit tests and BrowserStack autotests; the agent is not allowed to weaken a test to make it pass, and a set of architectural rules (how features compose, how navigation is modelled, how effects are cancelled) is checked on every change. The guardrails are what make the delivery cadence number meaningful: a build that ships is a build that passed the same bar as before.
+One piece of advice here: break your design down into a design system and maintain it from day one. It pays off twice. The agent does not keep re-creating the same UI components with small differences, and quality goes up, because those small differences are exactly where the bugs would have lived.
 
 ## The numbers, and how they were measured
 
@@ -43,25 +49,10 @@ July 2026 was the record month: 29,125 lines added, with the brand pages, ads an
 
 ## What did not change
 
-- **The review bar.** I read every diff. The agent writes more of the first draft; I still own the decision.
-- **The architecture.** Pure SwiftUI and TCA before, pure SwiftUI and TCA after. Agents work best in a codebase with strong, explicit conventions — TCA turned out to be a very good fit for that.
-- **Crash-free rate and test coverage.** {/* TODO: add actual numbers from Xcode Cloud / Crashlytics */}
+- **Review quality.** I read every diff. The agent writes more of the first draft; I still own the decision.
+- **The architecture.** Pure SwiftUI and TCA before, pure SwiftUI and TCA after. Agents work best in a codebase with strong, explicit conventions, and TCA turned out to be a very good fit for that.
+- **Stability.** The app is in the App Store and crashes are, at the moment, simply absent.
 
-## What I would tell another iOS developer
+## A note on the metric
 
-1. Lines of code are a proxy. Measure builds and features alongside them, or the number means nothing.
-2. Invest in the verification loop before investing in the prompt. A model that can check its own work on a simulator is worth more than a better model that cannot.
-3. Write down your conventions. Every rule you can state explicitly is a rule the agent will follow on the next hundred tickets.
-
-```swift
-// A convention the agent is asked to follow: every long-running effect is cancellable by ID.
-case .onAppear:
-    return .run { send in
-        for await diary in await diaryClient.observe(id) {
-            await send(.diaryUpdated(diary))
-        }
-    }
-    .cancellable(id: CancelID.observe, cancelInFlight: true)
-```
-
-*This post is a draft. The methodology and the data are final; the personal examples are still being written.*
+I know lines of code are a proxy metric, and I know they do not fully capture productivity. That is why builds and features are shown alongside them, and why the comparison uses identical windows on the same project. But these are the numbers that can actually be measured — and all of them point the same way: with the workflow in place, development speed and delivery speed went up, by more than I expected.

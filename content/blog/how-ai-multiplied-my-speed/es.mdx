@@ -1,37 +1,43 @@
 ---
-title: "Cómo la IA multiplicó mi velocidad como desarrollador iOS"
-description: "La misma app, el mismo desarrollador, dos ventanas de seis meses: +81 % de code output, +48 % de delivery cadence, +38 % de feature throughput. Qué cambió y qué no."
-date: "2026-09-15"
+title: "¿Cuánto acelera la IA el desarrollo en realidad? Lo he medido"
+description: "Todo el mundo me pregunta cuánto más rápido soy con IA. En lugar de una opinión, aquí están los números de 15 meses en un proyecto iOS: +81 % de code output, +48 % de delivery cadence, +38 % de feature throughput."
+date: "2026-09-14"
 tags: ["ai", "workflow", "swift", "productivity"]
 lang: "es"
-draft: true
+draft: false
 ---
 
-Durante quince meses he sido el único desarrollador iOS de [GrowDiaries](/es/projects/growdiaries/), una red social para cultivadores escrita en SwiftUI puro y The Composable Architecture. A mitad del proyecto reconstruí mi forma de trabajar en torno a agentes de IA. Como todo el historial vive en un único repositorio git y cada commit en `main` es una build entregable, puedo medir qué produjo ese cambio.
+Desarrolladores, managers de otras empresas, compañeros: la pregunta que más me han hecho este año es siempre la misma: *¿cuánto te acelera la IA en realidad?* Siempre tuve una respuesta, pero era una sensación. Como desarrollador, claramente me volví más rápido. Quería contrastar esa sensación con números.
+
+Tenía un escenario ideal para hacerlo. Durante el último año he sido el único desarrollador iOS de [GrowDiaries](/es/projects/growdiaries/), una red social para cultivadores escrita en SwiftUI puro y The Composable Architecture. El proyecto se divide limpiamente en dos mitades: en la primera trabajé como siempre lo había hecho, y en la segunda fui construyendo poco a poco un flujo de trabajo con IA alrededor de mi desarrollo. Como todo el historial vive en un único repositorio git y cada commit en `main` es una build entregable, las dos mitades se pueden comparar directamente.
+
+## El resultado
+
+Dos ventanas idénticas de seis meses: **junio–noviembre de 2025**, antes del flujo, frente a **febrero–julio de 2026**, con él. Mismo producto, misma arquitectura, mismo nivel de code review.
 
 <StatTiles locale="es" />
 
-Dos ventanas idénticas de seis meses: **junio–noviembre de 2025** frente a **febrero–julio de 2026**. El tamaño del equipo en ambas ventanas es uno. El producto, la arquitectura y el listón de revisión son los mismos. La diferencia es el flujo de trabajo.
+Mi intuición decía «aproximadamente una vez y media». Los números salieron incluso más altos: la delivery cadence creció un 48 %, el feature throughput un 38 % y el code output bruto un 81 %. Sinceramente, no esperaba tanto.
 
-## Qué significa aquí «flujo de trabajo impulsado por IA»
+Una salvedad antes de los detalles. Estos números miden la parte del trabajo que consiste en escribir código. Los desarrolladores también dedican mucho tiempo a discutir funcionalidades, planificar y coordinar, y cuánto ocupa eso en tu semana depende por completo de la empresa. En este proyecto pude dedicarme casi por completo al desarrollo, así que lo que ves aquí es sobre todo la aceleración de *construir* funcionalidades, no de todo lo que hace un desarrollador.
 
-No es autocompletado. El sistema tiene tres capas, y cada una existe porque la anterior por sí sola no bastaba.
+## Cómo es el flujo de trabajo
 
-### 1. Pipelines de codificación agéntica
+Como la mayoría de los desarrolladores, empecé conversando con ChatGPT y, a medida que apareció la codificación agéntica, la fui incorporando a mi trabajo paso a paso. Con el tiempo aprendí en qué es bueno mi harness y dónde falla, y la mayor parte de mi esfuerzo fue a una sola cosa: cerrar el ciclo de feedback. No el prompt ni la generación, sino la última parte: probar el código que produce el agente.
 
-Una funcionalidad empieza como un ticket. Escribo una especificación breve —qué hace la pantalla, qué feature de TCA es dueña del estado, cuáles son los casos límite— y se la paso a un agente que tiene el repositorio completo, las convenciones del proyecto y un conjunto de skills que describen cómo construyo features con TCA. El agente recorre el ticket entero: reducer, vista, dependencias, tests. Reviso el diff igual que revisaría el pull request de un compañero.
+### El ciclo de feedback
 
-{/* TODO: ejemplo concreto — un ticket desde la especificación hasta la build en main, con el prompt real y el tiempo empleado */}
+La mejor decisión que tomé al principio fue elegir TCA como arquitectura. Está construida en torno a la testabilidad, y eso resultó importar mucho más con un agente que con una persona al teclado.
 
-### 2. Ciclos de verificación automática
+Empecé por lo más barato: generar tests unitarios. Eso cubre la lógica de negocio, pero solo la lógica de negocio. Así que fui más allá e hice que el agente ejecutara autotests completos: al terminar una funcionalidad, la verifica él mismo. Escribí guías para derivar casos de prueba de mi especificación original, de modo que cada ticket viene con su propia lista de comprobación. Y el paso final de cada ticket es el agente ejecutando la funcionalidad en el simulador y recorriendo esos casos.
 
-La primera versión del pipeline producía código que compilaba y parecía correcto, y luego fallaba en el simulador. Así que cerramos el ciclo: cuando el agente termina, compila la app, ejecuta los tests unitarios, lanza la funcionalidad en el simulador y la recorre siguiendo el escenario de la especificación. Si algo falla, vuelve atrás y lo corrige antes de que yo vea el diff. La mayor parte de mi tiempo de revisión va ahora a decisiones de diseño, no a «¿esto arranca?».
+Afinar este ciclo llevó trabajo de verdad y me enseñó mucho sobre cómo estructurar el testing para un agente. Pero es exactamente lo que elevó la calidad del código generado, y una mayor calidad del primer borrador es lo que se convirtió en entregas más rápidas. También cambió mi forma de pensar la arquitectura: ahora valoro aún más los tests y una estructura amigable para el agente, porque son la forma más rápida de detectar errores y alucinaciones antes de que cuesten algo.
 
-{/* TODO: describir la comprobación de UI en el simulador y un bug detectado antes de la revisión */}
+### La entrada de datos
 
-### 3. Guardarraíles de testing
+El lado de entrada fue sorprendentemente sencillo de montar con MCP. La documentación se recoge de donde vive, y el MCP de Figma le da al agente la especificación de diseño completa de una pantalla, hasta los márgenes y los colores.
 
-La velocidad sin guardarraíles solo desplaza los bugs río abajo. Cada build pasa por Xcode Cloud con tests unitarios y autotests de BrowserStack; el agente no puede debilitar un test para que pase, y un conjunto de reglas de arquitectura (cómo se componen las features, cómo se modela la navegación, cómo se cancelan los efectos) se comprueba en cada cambio. Los guardarraíles son lo que da sentido al número de delivery cadence: una build que sale ha superado el mismo listón que antes.
+Un consejo aquí: descompón tu diseño en un sistema de diseño y mantenlo desde el primer día. Compensa por partida doble. El agente no vuelve a crear una y otra vez los mismos componentes de UI con pequeñas diferencias, y la calidad sube, porque en esas pequeñas diferencias es exactamente donde habrían vivido los bugs.
 
 ## Los números y cómo se midieron
 
@@ -43,25 +49,10 @@ Julio de 2026 fue el mes récord: 29.125 líneas añadidas, con las páginas de 
 
 ## Qué no cambió
 
-- **El listón de revisión.** Leo cada diff. El agente escribe más del primer borrador; la decisión sigue siendo mía.
+- **La calidad de la revisión.** Leo cada diff. El agente escribe más del primer borrador; la decisión sigue siendo mía.
 - **La arquitectura.** SwiftUI puro y TCA antes, SwiftUI puro y TCA después. Los agentes funcionan mejor en una base de código con convenciones fuertes y explícitas, y TCA resultó encajar muy bien.
-- **Tasa sin crashes y cobertura de tests.** {/* TODO: añadir cifras reales de Xcode Cloud / Crashlytics */}
+- **La estabilidad.** La app está en la App Store y, a día de hoy, los crashes sencillamente no existen.
 
-## Qué le diría a otro desarrollador iOS
+## Una nota sobre la métrica
 
-1. Las líneas de código son una métrica indirecta. Mide builds y funcionalidades junto a ellas, o el número no significa nada.
-2. Invierte en el ciclo de verificación antes que en el prompt. Un modelo que puede comprobar su propio trabajo en un simulador vale más que un modelo mejor que no puede.
-3. Escribe tus convenciones. Cada regla que puedas enunciar de forma explícita es una regla que el agente seguirá en los próximos cien tickets.
-
-```swift
-// Una convención que se pide al agente: todo efecto de larga duración es cancelable por ID.
-case .onAppear:
-    return .run { send in
-        for await diary in await diaryClient.observe(id) {
-            await send(.diaryUpdated(diary))
-        }
-    }
-    .cancellable(id: CancelID.observe, cancelInFlight: true)
-```
-
-*Este artículo es un borrador. La metodología y los datos son definitivos; los ejemplos personales todavía se están escribiendo.*
+Sé que las líneas de código son una métrica indirecta y sé que no capturan por completo la productividad. Por eso se muestran junto a las builds y las funcionalidades, y por eso la comparación usa ventanas idénticas del mismo proyecto. Pero son los números que sí se pueden medir, y todos apuntan en la misma dirección: con el flujo de trabajo en marcha, la velocidad de desarrollo y la velocidad de entrega subieron, más de lo que esperaba.
