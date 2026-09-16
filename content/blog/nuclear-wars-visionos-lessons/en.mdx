@@ -1,0 +1,50 @@
+---
+title: "Nuclear Wars: what I learned building a visionOS game solo in three months"
+description: "A Cold War strategy game on a 3D globe for Apple Vision Pro, built alone in Swift and RealityKit without a game engine. Why no engine, how the code is split, what RealityKit and App Review taught me."
+date: "2026-09-16"
+tags: ["visionos", "realitykit", "swift", "game-center", "indie"]
+lang: "en"
+draft: false
+---
+
+Since I suddenly had a lot of free time, I decided to follow a rule I had made up for myself: every self-respecting Apple developer should have their own game for Apple Vision Pro. Three months later [Nuclear Wars](/en/projects/nuclear-wars/) is in the App Store. This post is about what that took and what I am taking away from it.
+
+## The game
+
+Nuclear Wars is a Cold War strategy game where the map is a 3D globe floating in your room. You drag to spin it, pinch to zoom, walk around it, lean in to inspect a silo. In the preparation phase you place missile silos, radars, ABM batteries, submarines and an airbase on your continent. Then the cold war starts: submarines sail, radars sweep, air defense goes weapons-free. Then the full exchange.
+
+There is no winner. When the clock runs out, whoever keeps more of their population alive has lost less. Two rules make it a strategy game rather than a fireworks show: you only see what your radars see, and every launch reveals the unit that fired, permanently. Each shot is a trade between hitting hard and staying hidden.
+
+You can play solo against one to five AI commanders, or with friends through Game Center: a party code for people you know, automatch for strangers, up to six players, with AI filling the empty seats.
+
+## Why no game engine
+
+On visionOS the native stack gives you passthrough, system gestures, windows and the whole spatial UI for free. Unity or Unreal would add a layer between me and all of that, and for one globe with a few dozen units on it the layer buys nothing. So the game is Swift, SwiftUI and RealityKit, and nothing else.
+
+The cost is that you build your own game loop. The way I split it: the simulation lives in a pure Swift package with no RealityKit or GameKit imports. It advances in fixed ticks and knows nothing about rendering. The app subscribes to those ticks and only interpolates what it is told: positions of missiles, radar sweeps, burning cities. The whole app is about 6,000 lines of Swift, the simulation and networking package under 2,000. That split is also what made multiplayer possible later without touching the game rules.
+
+## What RealityKit taught me
+
+A few things from the build that I would have loved to read before starting.
+
+- **Layers on the globe are textures, not meshes.** Territory fill, fog of war and radar coverage are each a single equirectangular texture on its own thin sphere, a fraction of a percent larger than the globe. My first version drew radar domes as separate transparent meshes, and every intersection produced rendering artifacts from z-fighting. One union texture per layer, recomputed off the main actor, fixed it for good.
+- **RealityKit samples texture alpha as straight, not premultiplied.** Drawing translucent colors through `UIGraphicsImageRenderer` darkened everything by about two times. The fix is to draw opaque, un-premultiply, and set alpha by hand.
+- **Per-frame work belongs in a `SceneEvents.Update` subscription.** `RealityView.update` only fires when SwiftUI state changes, so it is the wrong place for anything that has to move every frame.
+
+## Multiplayer with Game Center
+
+Multiplayer is deterministic lockstep over `GKMatch`. The host owns the clock: every simulation tick goes out to clients as a frame with the tick number and the commands in it. Clients never step the simulation on their own, only on frames they receive, and their commands travel to the host, which folds them into the next frame. Bots live on the host. Because the simulation is deterministic, everyone ends the match with the same populations on the debrief screen.
+
+The party code was the surprising part. My first design used the new Game Center activities on visionOS 26. The activity passed review and went live, and `loadGameActivityDefinitions` still returned an empty list, on device and in the simulator, a day after release. I gave up waiting and encoded the four-character code reversibly into `GKMatchRequest.playerGroup`: Game Center only matches players with the same group, so the same code means the same room. Automatch is the same request with the default group.
+
+## Four rounds of App Review
+
+The map cost me four rounds. The first build used Earth with real cities. Rejected under Guideline 1.1.2: real nations as enemies. I replaced the city names with fictional ones. Rejected. I replaced countries with abstract sectors drawn along meridians and parallels. Rejected again: a real map is itself a real entity.
+
+So the game no longer takes place on Earth. The planet is generated by a noise function, its continents, coastlines, islands and polar caps share no geography with ours, the six playable sectors are its six fictional continents, and every city is synthetic with the same total population per sector. Opponents are unnamed. That build passed. If you plan a war game for the App Store, plan for a fictional world from day one.
+
+## What I am taking away
+
+This is my second visionOS project, and it was built the same way I described in [the previous post](/en/blog/how-ai-multiplied-my-speed/): with an agent doing most of the first draft and a feedback loop around it. Between the two projects I collected enough hard-won knowledge — RealityKit quirks like the ones above, spatial UI patterns, what App Review asks a game to change and why — to turn it into a proper skill for building visionOS apps with an agent. The game is a nice thing to have. The skill is the thing I would build the next one with.
+
+Nuclear Wars is on the [App Store](https://apps.apple.com/us/app/nuclear-wars/id6787667058), and there is a [37-second trailer](https://www.youtube.com/watch?v=I-g6ItBY7aM) if you want to see the globe in a room. Happy to talk visionOS, RealityKit or spatial games.

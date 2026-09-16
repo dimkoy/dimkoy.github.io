@@ -1,0 +1,50 @@
+---
+title: "Nuclear Wars: lo que aprendí construyendo un juego para visionOS en solitario en tres meses"
+description: "Un juego de estrategia de la Guerra Fría sobre un globo 3D para Apple Vision Pro, hecho en solitario con Swift y RealityKit sin motor. Por qué sin motor, cómo se divide el código y qué enseñaron RealityKit y App Review."
+date: "2026-09-16"
+tags: ["visionos", "realitykit", "swift", "game-center", "indie"]
+lang: "es"
+draft: false
+---
+
+Como de repente tenía mucho tiempo libre, decidí seguir una regla que me había inventado yo mismo: todo desarrollador de Apple que se precie debería tener su propio juego para Apple Vision Pro. Tres meses después, [Nuclear Wars](/es/projects/nuclear-wars/) está en la App Store. Este post trata de lo que costó y de lo que me llevo.
+
+## El juego
+
+Nuclear Wars es un juego de estrategia de la Guerra Fría en el que el mapa es un globo 3D que flota en tu habitación. Lo arrastras para girarlo, pellizcas para acercarlo, caminas a su alrededor, te inclinas para inspeccionar un silo. En la fase de preparación colocas silos de misiles, radares, baterías ABM, submarinos y una base aérea en tu continente. Luego empieza la guerra fría: los submarinos zarpan, los radares barren, la defensa aérea abre fuego. Luego, el intercambio total.
+
+No hay ganador. Cuando se agota el reloj, quien conserva más población ha perdido menos. Dos reglas lo convierten en un juego de estrategia y no en un espectáculo de fuegos artificiales: solo ves lo que ven tus radares, y cada lanzamiento revela para siempre la unidad que disparó. Cada disparo es un intercambio entre golpear fuerte y seguir oculto.
+
+Se puede jugar en solitario contra uno a cinco comandantes IA, o con amigos a través de Game Center: un código de grupo para conocidos, emparejamiento automático para desconocidos, hasta seis jugadores, con la IA ocupando los asientos libres.
+
+## Por qué sin motor de juego
+
+En visionOS la pila nativa te da gratis el passthrough, los gestos del sistema, las ventanas y toda la UI espacial. Unity o Unreal añadirían una capa entre yo y todo eso, y para un globo con unas docenas de unidades esa capa no aporta nada. Así que el juego es Swift, SwiftUI y RealityKit, y nada más.
+
+El coste es que construyes tu propio bucle de juego. Lo dividí así: la simulación vive en un paquete Swift puro sin importar RealityKit ni GameKit. Avanza en ticks fijos y no sabe nada del render. La app se suscribe a esos ticks y solo interpola lo que recibe: posiciones de misiles, barridos de radar, ciudades en llamas. Toda la app son unas 6.000 líneas de Swift; el paquete de simulación y red, menos de 2.000. Esa división es también lo que hizo posible añadir el multijugador más tarde sin tocar las reglas del juego.
+
+## Lo que me enseñó RealityKit
+
+Algunas cosas del proyecto que me habría encantado leer antes de empezar.
+
+- **Las capas del globo son texturas, no mallas.** El relleno de territorio, la niebla de guerra y la cobertura de radar son cada una una única textura equirectangular sobre su propia esfera fina, una fracción de porcentaje mayor que el globo. Mi primera versión dibujaba las cúpulas de radar como mallas transparentes separadas, y cada intersección producía artefactos de render por z-fighting. Una textura unión por capa, recalculada fuera del main actor, lo arregló para siempre.
+- **RealityKit muestrea el alfa de las texturas como straight, no premultiplicado.** Dibujar colores translúcidos con `UIGraphicsImageRenderer` oscurecía todo aproximadamente el doble. La solución: dibujar opaco, deshacer la premultiplicación y fijar el alfa a mano.
+- **El trabajo por fotograma va en una suscripción a `SceneEvents.Update`.** `RealityView.update` solo se dispara cuando cambia el estado de SwiftUI, así que es el lugar equivocado para cualquier cosa que deba moverse en cada fotograma.
+
+## Multijugador con Game Center
+
+El multijugador es lockstep determinista sobre `GKMatch`. El anfitrión es dueño del reloj: cada tick de la simulación sale hacia los clientes como un frame con el número de tick y los comandos que contiene. Los clientes nunca avanzan la simulación por su cuenta, solo con los frames que reciben, y sus comandos viajan al anfitrión, que los incorpora al siguiente frame. Los bots viven en el anfitrión. Como la simulación es determinista, todos terminan la partida con las mismas cifras de población en la pantalla final.
+
+La parte sorprendente fue el código de grupo. Mi primer diseño usaba las nuevas actividades de Game Center de visionOS 26. La actividad pasó la revisión y quedó activa, y `loadGameActivityDefinitions` seguía devolviendo una lista vacía, en el dispositivo y en el simulador, un día después del lanzamiento. Dejé de esperar y codifiqué de forma reversible el código de cuatro caracteres en `GKMatchRequest.playerGroup`: Game Center solo empareja a jugadores con el mismo grupo, así que el mismo código significa la misma sala. El emparejamiento automático es la misma petición con el grupo por defecto.
+
+## Cuatro rondas de App Review
+
+El mapa me costó cuatro rondas. La primera build usaba la Tierra con ciudades reales. Rechazada por la Guideline 1.1.2: naciones reales como enemigos. Sustituí los nombres de las ciudades por ficticios. Rechazada. Sustituí los países por sectores abstractos trazados por meridianos y paralelos. Rechazada de nuevo: un mapa real es en sí mismo una entidad real.
+
+Así que el juego ya no ocurre en la Tierra. El planeta lo genera una función de ruido; sus continentes, costas, islas y casquetes polares no comparten geografía con el nuestro, los seis sectores jugables son sus seis continentes ficticios y todas las ciudades son sintéticas con la misma población total por sector. Los oponentes no tienen nombre. Esa build pasó. Si planeas un juego de guerra para la App Store, planea un mundo ficticio desde el primer día.
+
+## Lo que me llevo
+
+Es mi segundo proyecto para visionOS, y se construyó igual que describí en [el post anterior](/es/blog/how-ai-multiplied-my-speed/): un agente escribe la mayor parte del primer borrador y hay un bucle de retroalimentación a su alrededor. Entre los dos proyectos reuní suficiente conocimiento ganado a golpes — peculiaridades de RealityKit como las de arriba, patrones de UI espacial, qué pide cambiar App Review a un juego y por qué — para convertirlo en una skill completa para construir apps de visionOS con un agente. El juego es algo bonito de tener. La skill es con lo que construiría el siguiente.
+
+Nuclear Wars está en la [App Store](https://apps.apple.com/us/app/nuclear-wars/id6787667058), y hay un [tráiler de 37 segundos](https://www.youtube.com/watch?v=I-g6ItBY7aM) si quieres ver el globo en una habitación. Encantado de hablar de visionOS, RealityKit o juegos espaciales.
