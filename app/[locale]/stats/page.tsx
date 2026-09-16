@@ -6,7 +6,7 @@ import { STATS } from "@/content/stats/growdiaries";
 import { CONTENT_UPDATED } from "@/content/updated";
 import { isLocale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
-import { absUrl, breadcrumbJsonLd, graph, personRef, WEBSITE_ID } from "@/lib/jsonld";
+import { absUrl, breadcrumbJsonLd, graph, isoDateTime, personRef, WEBSITE_ID } from "@/lib/jsonld";
 import { buildMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ locale: string }> };
@@ -37,7 +37,7 @@ export default async function StatsPage({ params }: Props) {
       creator: personRef(locale),
       about: { "@type": "SoftwareApplication", name: "GrowDiaries", url: absUrl(locale, "/projects/growdiaries") },
       temporalCoverage: `${STATS.first}/${STATS.last}`,
-      dateModified: CONTENT_UPDATED.stats,
+      dateModified: isoDateTime(CONTENT_UPDATED.stats),
       isAccessibleForFree: true,
       license: "https://creativecommons.org/licenses/by/4.0/",
       keywords: ["iOS", "Swift", "SwiftUI", "TCA", "developer productivity", "AI-assisted development", "git statistics"],

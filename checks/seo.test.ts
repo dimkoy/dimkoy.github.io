@@ -6,6 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { test } from "node:test";
 
+const ISO_DATETIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/;
 const OUT = path.join(process.cwd(), "out");
 const SITE = "https://dmitriicherviakov.com";
 const LOCALES = ["en", "ru", "es"];
@@ -59,6 +60,7 @@ test("home page: ProfilePage with full Person, WebSite, portrait, key facts", ()
     const s = html(path.join(OUT, l, "index.html"));
     const [profile] = byType(s, "ProfilePage");
     assert.ok(profile, `${l}: ProfilePage`);
+    assert.match(profile.dateModified, ISO_DATETIME, `${l}: ProfilePage.dateModified`);
     const person = profile.mainEntity as Record<string, unknown>;
     assert.equal(person["@type"], "Person");
     for (const k of ["description", "image", "sameAs", "worksFor", "alumniOf", "knowsAbout", "hasOccupation", "jobTitle", "knowsLanguage"]) assert.ok(person[k], `${l}: Person.${k}`);
@@ -78,6 +80,7 @@ test("blog post: BlogPosting with author/publisher/mainEntityOfPage, byline, bre
     const [post] = byType(s, "BlogPosting");
     assert.ok(post, `${urlOf(p)}: BlogPosting`);
     for (const k of ["author", "publisher", "mainEntityOfPage", "datePublished", "dateModified", "wordCount", "timeRequired", "image", "inLanguage"]) assert.ok(post[k], `${urlOf(p)}: ${k}`);
+    for (const k of ["datePublished", "dateModified"]) assert.match(post[k], ISO_DATETIME, `${urlOf(p)}: ${k} must be a full ISO 8601 date-time`);
     assert.equal((post.author as Record<string, unknown>)["@id"], `${SITE}/#person`);
     assert.ok(byType(s, "BreadcrumbList").length === 1, `${urlOf(p)}: breadcrumb`);
     assert.match(s, /rel="author"/, `${urlOf(p)}: byline`);
@@ -96,6 +99,7 @@ test("index pages: h2 cards, CollectionPage; stats: Dataset and tables with capt
     assert.doesNotMatch(projects, /<h3/, `${l}: projects index should not skip to h3`);
     const stats = html(path.join(OUT, l, "stats", "index.html"));
     assert.ok(byType(stats, "Dataset").length === 1, `${l}: Dataset`);
+    assert.match(byType(stats, "Dataset")[0].dateModified, ISO_DATETIME, `${l}: Dataset.dateModified`);
     assert.ok((stats.match(/<caption/g) ?? []).length === 5, `${l}: table captions`);
     assert.match(stats, /\+81%/, `${l}: numbers in HTML`);
   }

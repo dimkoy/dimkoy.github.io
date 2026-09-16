@@ -19,6 +19,15 @@ const TOPICS = [
   "visionOS and spatial computing", "RealityKit", "Game Center multiplayer", "Deterministic lockstep networking",
 ];
 
+/** Google validates dateModified/datePublished as full ISO 8601 date-times; expand a plain date to noon in the site's timezone. */
+export function isoDateTime(date: string, time = "12:00:00"): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+  const probe = new Date(`${date}T${time}Z`);
+  const name = new Intl.DateTimeFormat("en-US", { timeZone: "Europe/Madrid", timeZoneName: "longOffset" }).formatToParts(probe).find((x) => x.type === "timeZoneName")?.value ?? "GMT";
+  const offset = name === "GMT" ? "+00:00" : name.slice(3);
+  return `${date}T${time}${offset}`;
+}
+
 /** One @context, many nodes. */
 export function graph(...nodes: Node[]): Node {
   return { "@context": "https://schema.org", "@graph": nodes };
@@ -117,7 +126,7 @@ export function profilePageJsonLd(locale: Locale): Node {
     name: `${r.name} — ${r.headline}`,
     description: r.seoDescription,
     inLanguage: locale,
-    dateModified: CONTENT_UPDATED.resume,
+    dateModified: isoDateTime(CONTENT_UPDATED.resume),
     isPartOf: { "@id": WEBSITE_ID },
     mainEntity: personJsonLd(locale),
   };

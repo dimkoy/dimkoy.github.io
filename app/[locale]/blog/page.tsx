@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { getAllPosts } from "@/lib/blog";
 import { isLocale, localePath } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
-import { absUrl, breadcrumbJsonLd, graph, PERSON_ID, personRef, WEBSITE_ID } from "@/lib/jsonld";
+import { absUrl, breadcrumbJsonLd, graph, isoDateTime, PERSON_ID, personRef, WEBSITE_ID } from "@/lib/jsonld";
 import { site } from "@/lib/site";
 import { buildMetadata } from "@/lib/seo";
 
@@ -41,8 +41,8 @@ export default async function BlogPage({ params }: Props) {
         url: absUrl(locale, `/blog/${p.slug}`),
         headline: p.title,
         description: p.description,
-        datePublished: p.date,
-        dateModified: p.updated ?? p.date,
+        datePublished: isoDateTime(p.date),
+        dateModified: isoDateTime(p.updated ?? p.date),
         inLanguage: locale,
         author: { "@id": PERSON_ID },
       })),

@@ -8,7 +8,7 @@ import { formatDate } from "@/lib/format";
 import { isLocale, localePath, locales } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { t } from "@/lib/i18n/t";
-import { absUrl, breadcrumbJsonLd, graph, PERSON_ID, personRef, WEBSITE_ID } from "@/lib/jsonld";
+import { absUrl, breadcrumbJsonLd, graph, isoDateTime, PERSON_ID, personRef, WEBSITE_ID } from "@/lib/jsonld";
 import { renderMdx } from "@/lib/mdx";
 import { buildMetadata } from "@/lib/seo";
 import { SITE_URL, site } from "@/lib/site";
@@ -58,8 +58,8 @@ export default async function PostPage({ params }: Props) {
       url,
       headline: post.title,
       description: post.description,
-      datePublished: post.date,
-      dateModified: post.updated ?? post.date,
+      datePublished: isoDateTime(post.date),
+      dateModified: isoDateTime(post.updated ?? post.date),
       inLanguage: locale,
       keywords: post.tags.join(", "),
       articleSection: post.tags,
