@@ -113,6 +113,7 @@ export const resumeEn: Resume = {
   skills: [
     { group: "Languages", items: ["Swift", "Objective-C"] },
     { group: "UI", items: ["SwiftUI", "UIKit", "SnapKit"] },
+    { group: "Platforms", items: ["iOS", "visionOS", "RealityKit", "GameKit"] },
     { group: "Architecture", items: ["TCA", "MVVM", "VIPER", "MVC"] },
     { group: "Networking", items: ["Alamofire", "Moya", "gRPC", "Charles / Proxyman"] },
     { group: "Practices", items: ["TDD", "DDD", "CI/CD", "AI-driven workflows", "Code review"] },

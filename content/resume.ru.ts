@@ -113,6 +113,7 @@ export const resumeRu: Resume = {
   skills: [
     { group: "Языки", items: ["Swift", "Objective-C"] },
     { group: "UI", items: ["SwiftUI", "UIKit", "SnapKit"] },
+    { group: "Платформы", items: ["iOS", "visionOS", "RealityKit", "GameKit"] },
     { group: "Архитектура", items: ["TCA", "MVVM", "VIPER", "MVC"] },
     { group: "Сеть", items: ["Alamofire", "Moya", "gRPC", "Charles / Proxyman"] },
     { group: "Практики", items: ["TDD", "DDD", "CI/CD", "AI-driven workflows", "Код-ревью"] },

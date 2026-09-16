@@ -16,6 +16,7 @@ const TOPICS = [
   "iOS development", "Swift", "SwiftUI", "UIKit", "The Composable Architecture (TCA)", "Mobile app architecture",
   "Fintech and trading apps", "Social network apps", "App stability and crash-free rate", "Deep linking and navigation",
   "Unit testing and test automation", "CI/CD for iOS", "AI-assisted software development", "Agentic coding workflows",
+  "visionOS and spatial computing", "RealityKit", "Game Center multiplayer", "Deterministic lockstep networking",
 ];
 
 /** One @context, many nodes. */

@@ -2,6 +2,94 @@ import type { Project } from "./types";
 
 export const projects: Project[] = [
   {
+    slug: "nuclear-wars",
+    kind: "product",
+    featured: true,
+    period: { start: "2026-06" },
+    released: "2026-09-08",
+    platform: "visionOS",
+    applicationCategory: "GameApplication",
+    price: "9.99",
+    tech: ["Swift", "SwiftUI", "RealityKit", "visionOS", "GameKit", "Swift Concurrency", "Claude Code", "Remotion"],
+    links: [
+      { kind: "appstore", url: "https://apps.apple.com/us/app/nuclear-wars/id6787667058" },
+      { kind: "web", url: "https://www.youtube.com/watch?v=I-g6ItBY7aM", label: { en: "Watch the trailer", ru: "Смотреть трейлер", es: "Ver el tráiler" } },
+    ],
+    media: [
+      { type: "youtube", id: "I-g6ItBY7aM", uploadDate: "2026-09-16", language: "en", alt: { en: "Nuclear Wars trailer", ru: "Трейлер Nuclear Wars", es: "Tráiler de Nuclear Wars" } },
+      { type: "image", src: "/media/nuclear-wars/03-full-exchange.jpg", width: 1200, height: 982, alt: { en: "Phase 3, full exchange: missile trails cross the globe between two sectors while radar domes track the strikes", ru: "Фаза 3, обмен ударами: следы ракет пересекают глобус между двумя секторами, купола радаров ведут удары", es: "Fase 3, intercambio total: estelas de misiles cruzan el globo entre dos sectores mientras las cúpulas de radar siguen los ataques" } },
+      { type: "image", src: "/media/nuclear-wars/02-preparation.jpg", width: 1200, height: 982, alt: { en: "Phase 1, preparation: placing silos, radars, ABM batteries and submarines on a continent of the globe", ru: "Фаза 1, подготовка: расстановка шахт, радаров, батарей ПРО и подлодок на континенте глобуса", es: "Fase 1, preparación: colocando silos, radares, baterías ABM y submarinos en un continente del globo" } },
+      { type: "image", src: "/media/nuclear-wars/04-impact.jpg", width: 1200, height: 982, alt: { en: "Warheads detonating over enemy cities; burning cities and interceptor launches in 3D", ru: "Боеголовки взрываются над городами противника; горящие города и пуски перехватчиков в 3D", es: "Ojivas detonando sobre ciudades enemigas; ciudades en llamas y lanzamientos de interceptores en 3D" } },
+      { type: "image", src: "/media/nuclear-wars/05-debrief.jpg", width: 1200, height: 982, alt: { en: "Match debrief: surviving population per side decides who lost less", ru: "Разбор матча: выжившее население каждой стороны решает, кто проиграл меньше", es: "Informe final: la población superviviente de cada bando decide quién perdió menos" } },
+      { type: "image", src: "/media/nuclear-wars/01-lobby.jpg", width: 1200, height: 982, alt: { en: "Lobby: the globe floating in a living room next to the floating command HUD", ru: "Лобби: глобус парит в гостиной рядом с командным HUD", es: "Lobby: el globo flotando en un salón junto al HUD de mando" } },
+    ],
+    metrics: [
+      { value: "3", label: { en: "months solo, from idea to App Store", ru: "месяца соло от идеи до App Store", es: "meses en solitario, de la idea a la App Store" } },
+      { value: "6", label: { en: "players per match via Game Center", ru: "игроков в матче через Game Center", es: "jugadores por partida vía Game Center" } },
+      { value: "10", label: { en: "App Store languages", ru: "языков в App Store", es: "idiomas en la App Store" } },
+      { value: "0", label: { en: "game engines — native RealityKit", ru: "игровых движков — нативный RealityKit", es: "motores de juego: RealityKit nativo" } },
+    ],
+    i18n: {
+      en: {
+        title: "Nuclear Wars",
+        role: "Solo developer",
+        tagline: "A Cold War strategy game for Apple Vision Pro where the whole planet floats in your room. Built solo in Swift, SwiftUI and RealityKit, no game engine.",
+        description: [
+          "Nuclear Wars turns a room into a Cold War command center. A living 3D globe floats in front of the player: drag to rotate, pinch to zoom, walk around it, lean in to inspect a silo. Every match escalates through three phases — preparation, cold war, full exchange — and there is no winner: when the clock runs out, whoever keeps more of their population alive loses less. Firing reveals a unit's position permanently, and you only see what your radars see, so every launch is a trade-off between striking power and staying hidden.",
+          "Under the hood it is Swift, SwiftUI and RealityKit with no game engine. The simulation lives in a pure Swift package with fixed ticks; the render layer only interpolates what it is told. Multiplayer is deterministic lockstep over Game Center: the host is authoritative, clients step only on received tick frames, and an FNV-1a checksum of the game state every 100 ticks catches desync. The same package runs the tests — a full host plus two clients and a bot, played through a loopback transport with jitter.",
+          "Released on the App Store on September 8, 2026 after about three months of solo work and four rounds of App Review: solo play against 1–5 AI commanders, party codes and automatch for up to 6 players with AI filling empty seats, ten store languages, no ads, no accounts, no data collection. It is my second visionOS project, and the hard-won knowledge from both — RealityKit quirks, spatial UI patterns, what App Review asks a game to change and why — became a reusable skill for building visionOS apps with AI agents.",
+        ],
+        highlights: [
+          "Spatial 3D globe in RealityKit: territory, fog of war and radar coverage are equirectangular textures on thin concentric spheres instead of overlapping meshes — no z-fighting, recomputed off the main actor",
+          "Deterministic lockstep multiplayer over Game Center (GKMatch): authoritative host, tick frames, FNV-1a state checksums every 100 ticks to catch desync",
+          "Simulation in a pure Swift package with fixed ticks, tested end to end: host + 2 clients + bot through a loopback transport with jitter",
+          "Five unit types with real trade-offs — silos (strike or air-defense mode), radars, ABM batteries, submarines, airbases — and a permanent reveal on every launch",
+          "Solo against 1–5 AI commanders, Game Center party codes and automatch for up to 6 players, AI fills empty seats",
+          "Passed App Review with a procedurally generated planet — six fictional continents, synthetic cities, no real countries; 12+ rating, ten store languages, no IAP, no ads, no data collection",
+          "Trailer and App Store preview rendered programmatically with Remotion from visionOS simulator footage",
+        ],
+      },
+      ru: {
+        title: "Nuclear Wars",
+        role: "Соло-разработчик",
+        tagline: "Стратегия про холодную войну для Apple Vision Pro, где целая планета парит у вас в комнате. Сделана в одиночку на Swift, SwiftUI и RealityKit, без игрового движка.",
+        description: [
+          "Nuclear Wars превращает комнату в командный центр холодной войны. Живой трёхмерный глобус парит перед игроком: вращайте его перетаскиванием, приближайте щипком, обходите вокруг, наклонитесь к шахте. Каждый матч проходит три фазы эскалации — подготовка, холодная война, обмен ударами — и победителя нет: когда таймер истекает, кто сохранил больше населения, тот проиграл меньше. Стрельба навсегда раскрывает позицию юнита, а видите вы только то, что видят ваши радары, поэтому каждый пуск — размен между силой удара и скрытностью.",
+          "Внутри — Swift, SwiftUI и RealityKit, без игрового движка. Симуляция живёт в отдельном Swift-пакете с фиксированным тиком; рендер только интерполирует то, что ему отдали. Мультиплеер — детерминированный lockstep поверх Game Center: хост авторитетен, клиенты шагают только по полученным тик-кадрам, а FNV-1a-контрольная сумма состояния игры каждые 100 тиков ловит рассинхрон. Тот же пакет гоняет тесты: полный матч хост + два клиента + бот через loopback-транспорт с джиттером.",
+          "Вышла в App Store 8 сентября 2026 года после примерно трёх месяцев соло-работы и четырёх раундов App Review: соло против 1–5 ИИ-командующих, коды группы и автоподбор до 6 игроков, свободные места добирает ИИ, десять языков в сторе, без рекламы, аккаунтов и сбора данных. Это мой второй проект под visionOS, и набитые на двух проектах шишки — особенности RealityKit, паттерны пространственного UI, что и почему просит поменять App Review — стали переиспользуемым скиллом для разработки visionOS-приложений с AI-агентами.",
+        ],
+        highlights: [
+          "Пространственный 3D-глобус в RealityKit: территории, туман войны и покрытие радаров — эквиректангулярные текстуры на тонких концентрических сферах вместо пересекающихся мешей; никакого z-fighting, пересчёт вне main actor",
+          "Детерминированный lockstep-мультиплеер поверх Game Center (GKMatch): авторитетный хост, тик-кадры, контрольные суммы состояния FNV-1a каждые 100 тиков",
+          "Симуляция в чистом Swift-пакете с фиксированным тиком, протестирована целиком: хост + 2 клиента + бот через loopback-транспорт с джиттером",
+          "Пять типов юнитов с реальными компромиссами — шахты (удар или режим ПВО), радары, батареи ПРО, подлодки, авиабазы — и необратимое раскрытие при каждом пуске",
+          "Соло против 1–5 ИИ-командующих, коды группы и автоподбор Game Center до 6 игроков, пустые места занимает ИИ",
+          "Прошла App Review с процедурно сгенерированной планетой — шесть вымышленных континентов, синтетические города, никаких реальных стран; рейтинг 12+, десять языков в сторе, без IAP, рекламы и сбора данных",
+          "Трейлер и превью для App Store собраны программно в Remotion из записей симулятора visionOS",
+        ],
+      },
+      es: {
+        title: "Nuclear Wars",
+        role: "Desarrollador en solitario",
+        tagline: "Un juego de estrategia de la Guerra Fría para Apple Vision Pro en el que el planeta entero flota en tu habitación. Construido en solitario con Swift, SwiftUI y RealityKit, sin motor de juego.",
+        description: [
+          "Nuclear Wars convierte una habitación en un centro de mando de la Guerra Fría. Un globo 3D vivo flota delante del jugador: arrástralo para girarlo, pellizca para acercarlo, camina a su alrededor, inclínate para inspeccionar un silo. Cada partida escala en tres fases — preparación, guerra fría, intercambio total — y no hay ganador: cuando se agota el reloj, quien conserva más población pierde menos. Disparar revela la posición de una unidad para siempre, y solo ves lo que ven tus radares, así que cada lanzamiento es un intercambio entre potencia de ataque y sigilo.",
+          "Por dentro es Swift, SwiftUI y RealityKit, sin motor de juego. La simulación vive en un paquete Swift puro con ticks fijos; la capa de render solo interpola lo que recibe. El multijugador es lockstep determinista sobre Game Center: el anfitrión es autoritativo, los clientes solo avanzan con los tick frames recibidos y un checksum FNV-1a del estado del juego cada 100 ticks detecta desincronizaciones. El mismo paquete ejecuta los tests: una partida completa con anfitrión, dos clientes y un bot a través de un transporte loopback con jitter.",
+          "Publicado en la App Store el 8 de septiembre de 2026 tras unos tres meses de trabajo en solitario y cuatro rondas de App Review: modo solo contra 1–5 comandantes IA, códigos de grupo y emparejamiento automático para hasta 6 jugadores con IA ocupando los asientos libres, diez idiomas en la tienda, sin anuncios, sin cuentas, sin recogida de datos. Es mi segundo proyecto para visionOS, y lo aprendido a golpes en ambos — peculiaridades de RealityKit, patrones de UI espacial, qué pide cambiar App Review a un juego y por qué — se convirtió en una skill reutilizable para construir apps de visionOS con agentes de IA.",
+        ],
+        highlights: [
+          "Globo 3D espacial en RealityKit: territorio, niebla de guerra y cobertura de radar son texturas equirectangulares sobre finas esferas concéntricas en lugar de mallas superpuestas; sin z-fighting, recalculadas fuera del main actor",
+          "Multijugador lockstep determinista sobre Game Center (GKMatch): anfitrión autoritativo, tick frames, checksums FNV-1a del estado cada 100 ticks",
+          "Simulación en un paquete Swift puro con ticks fijos, probada de extremo a extremo: anfitrión + 2 clientes + bot a través de un transporte loopback con jitter",
+          "Cinco tipos de unidad con compromisos reales — silos (ataque o modo antiaéreo), radares, baterías ABM, submarinos, bases aéreas — y revelado permanente en cada lanzamiento",
+          "Solo contra 1–5 comandantes IA, códigos de grupo y emparejamiento automático de Game Center para hasta 6 jugadores, la IA ocupa los asientos libres",
+          "Superó App Review con un planeta generado proceduralmente — seis continentes ficticios, ciudades sintéticas, ningún país real; clasificación 12+, diez idiomas en la tienda, sin IAP, sin anuncios, sin recogida de datos",
+          "Tráiler y vista previa de la App Store renderizados programáticamente con Remotion a partir de grabaciones del simulador de visionOS",
+        ],
+      },
+    },
+  },
+  {
     slug: "growdiaries",
     kind: "product",
     featured: true,
@@ -83,6 +171,7 @@ export const projects: Project[] = [
     tech: ["Swift", "SwiftUI", "UIKit", "MVVM", "SnapKit", "Design system", "DDD"],
     links: [],
     media: [],
+    ownership: "contributor",
     awards: ["#1 investment app — Digital Investment Rank 2024 by Markswebb"],
     metrics: [
       { value: "400K", label: { en: "monthly active users", ru: "активных пользователей в месяц", es: "usuarios activos mensuales" } },

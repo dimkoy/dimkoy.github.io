@@ -47,7 +47,7 @@ export default async function ProjectPage({ params }: Props) {
     embedUrl: `https://www.youtube-nocookie.com/embed/${m.id}`,
     contentUrl: `https://www.youtube.com/watch?v=${m.id}`,
     uploadDate: m.uploadDate ?? `${project.period.start}-01`,
-    inLanguage: "ru",
+    inLanguage: m.language ?? "ru",
   }] : []);
   const common = { name: p.title, description, url, inLanguage: locale, keywords: project.tech.join(", "), isPartOf: { "@id": WEBSITE_ID } };
   const entity: Node = project.kind === "product"
@@ -55,14 +55,15 @@ export default async function ProjectPage({ params }: Props) {
         "@type": "SoftwareApplication",
         "@id": `${url}#app`,
         ...common,
-        applicationCategory: "MobileApplication",
-        operatingSystem: "iOS",
+        applicationCategory: project.applicationCategory ?? "MobileApplication",
+        operatingSystem: project.platform ?? "iOS",
         installUrl: project.links.find((l) => l.kind === "appstore")?.url,
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-        datePublished: `${project.period.start}-01`,
-        ...(images.length ? { screenshot: images } : {}),
+        offers: { "@type": "Offer", price: project.price ?? "0", priceCurrency: "USD" },
+        datePublished: project.released ?? `${project.period.start}-01`,
+        ...(images.length ? { screenshot: images, image: images[0] } : {}),
+        ...(videos.length ? { video: videos[0] } : {}),
         ...(project.awards ? { award: project.awards } : {}),
-        ...(project.slug === "growdiaries" ? { author: me, creator: me } : { contributor: me }),
+        ...(project.ownership === "contributor" ? { contributor: me } : { author: me, creator: me }),
       }
     : project.kind === "talk"
       ? {

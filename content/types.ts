@@ -15,7 +15,7 @@ export type ProjectLink = {
 export type Media =
   | { type: "image"; src: string; alt: Localized; width: number; height: number }
   | { type: "video"; src: string; poster?: string; alt: Localized; width: number; height: number }
-  | { type: "youtube"; id: string; alt: Localized; /** ISO date the video was published (VideoObject.uploadDate) */ uploadDate?: string };
+  | { type: "youtube"; id: string; alt: Localized; /** ISO date the video was published (VideoObject.uploadDate) */ uploadDate?: string; /** BCP-47 language of the video (VideoObject.inLanguage), defaults to "ru" */ language?: string };
 
 export type Metric = { value: string; label: Localized; sub?: Localized };
 
@@ -34,6 +34,16 @@ export type Project = {
   metrics?: Metric[];
   /** Awards or ratings the product received (used in structured data), English */
   awards?: string[];
+  /** Operating system of a product (SoftwareApplication.operatingSystem), defaults to "iOS" */
+  platform?: string;
+  /** schema.org application category, defaults to "MobileApplication" */
+  applicationCategory?: string;
+  /** Store price in USD as a string, defaults to "0" */
+  price?: string;
+  /** Exact ISO release date; defaults to the first day of period.start */
+  released?: string;
+  /** Whether the person built the product ("author", default) or worked on someone else's ("contributor") */
+  ownership?: "author" | "contributor";
   i18n: Localized<{
     title: string;
     role: string;
