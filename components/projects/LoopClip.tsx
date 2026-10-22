@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import type { ClipMedia } from "@/content/types";
 import type { Locale } from "@/lib/i18n/config";
+import { useAutoplayInView } from "./useAutoplayInView";
 
 /**
  * Silent looping gameplay clip, captioned with its alt text. Loads and plays only while on screen; with reduced motion it
@@ -10,24 +11,7 @@ import type { Locale } from "@/lib/i18n/config";
  */
 export function LoopClip({ clip, locale, className = "" }: { clip: ClipMedia; locale: Locale; className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    const video = ref.current;
-    if (!video) return;
-    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(motion.matches);
-    if (motion.matches) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      },
-      { threshold: 0.25 },
-    );
-    observer.observe(video);
-    return () => observer.disconnect();
-  }, []);
+  const reduced = useAutoplayInView(ref);
 
   return (
     <figure className={className}>

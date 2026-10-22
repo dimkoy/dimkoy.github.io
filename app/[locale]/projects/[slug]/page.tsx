@@ -6,6 +6,8 @@ import { getProject, projects } from "@/content/projects";
 import { projectThemes } from "@/content/types";
 import { LoopClip } from "@/components/projects/LoopClip";
 import { MediaGallery } from "@/components/projects/MediaGallery";
+import { NuclearWarsLanding } from "@/components/projects/nuclear-wars/NuclearWarsLanding";
+import { ProjectBadges } from "@/components/projects/ProjectBadges";
 import { ProjectLinks } from "@/components/projects/ProjectLinks";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { formatPeriod } from "@/lib/format";
@@ -28,7 +30,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const project = getProject(slug);
   if (!isLocale(locale) || !project) return {};
   const p = project.i18n[locale];
-  return buildMetadata({ locale, path: `/projects/${slug}`, title: p.title, description: p.tagline });
+  return buildMetadata({
+    locale, path: `/projects/${slug}`, title: p.title, description: p.tagline,
+    ...(project.ogImage && { image: project.ogImage[locale], imageAlt: `${p.title} — ${p.tagline}` }),
+  });
 }
 
 /** Themed project pages are dark regardless of the site theme — match the browser chrome. */
@@ -105,6 +110,15 @@ export default async function ProjectPage({ params }: Props) {
     entity,
   );
 
+  if (project.theme === "nuclear-wars") {
+    return (
+      <main data-project-theme={project.theme}>
+        <JsonLd data={jsonLd} />
+        <NuclearWarsLanding project={project} locale={locale} dict={dict} />
+      </main>
+    );
+  }
+
   return (
     <main className="py-10" data-project-theme={project.theme}>
       <JsonLd data={jsonLd} />
@@ -116,12 +130,7 @@ export default async function ProjectPage({ params }: Props) {
       <p className="mt-2 text-lg text-ink2">{p.tagline}</p>
       <div className="mt-5 flex flex-wrap items-center gap-2">
         <ProjectLinks links={project.links} locale={locale} dict={dict} />
-        {project.badges?.map((b) => (
-          <a key={b.href} href={b.href} target="_blank" rel="noopener" className="inline-flex">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={b.src} alt={b.alt} width={b.width} height={b.height} className="h-[34px] w-auto" />
-          </a>
-        ))}
+        <ProjectBadges badges={project.badges} />
       </div>
 
       {project.metrics && (

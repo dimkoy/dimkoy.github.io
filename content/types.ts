@@ -46,6 +46,8 @@ export type Project = {
   /** Media placed inside the description, after the paragraph with this index */
   inline?: { afterParagraph: number; clip: ClipMedia }[];
   badges?: Badge[];
+  /** Link preview (og:image, 1200×630) per locale; without it the site default is used. */
+  ogImage?: Localized;
   theme?: keyof typeof projectThemes;
   metrics?: Metric[];
   /** Awards or ratings the product received (used in structured data), English */
