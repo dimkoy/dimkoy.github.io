@@ -39,7 +39,7 @@ const FOV = 40;
 const SEGMENTS = 120;
 const MAX_MISSILES = 5;
 const MAX_PUFFS = 1600;
-/** Pull on sparks (puffs without drag), px/s². */
+/** Pull on sparks (puffs spawned with `falls`), px/s². */
 const GRAVITY = 40;
 /** Share of the scroll the sky follows. */
 const PARALLAX = 0.25;
@@ -99,6 +99,7 @@ class Puffs {
   private age = new Float32Array(MAX_PUFFS);
   private grow = new Float32Array(MAX_PUFFS);
   private drag = new Float32Array(MAX_PUFFS);
+  private falls = new Uint8Array(MAX_PUFFS);
   private start = new Float32Array(MAX_PUFFS * 4);
   private end = new Float32Array(MAX_PUFFS * 3);
   private base = new Float32Array(MAX_PUFFS);
@@ -133,8 +134,11 @@ class Puffs {
     this.points.frustumCulled = false;
   }
 
-  /** Color goes from `rgba` to `endRgb` over the life, alpha fades out; size grows by `grow` per second. */
-  spawn(p: V, vx: number, vy: number, vz: number, rgba: Rgba, endRgb: Rgb, size: number, life: number, grow = 0, drag = 0) {
+  /**
+   * Color goes from `rgba` to `endRgb` over the life, alpha fades out; size grows by `grow` per second; velocity
+   * decays by `drag` per second. Only puffs that `falls` (sparks) feel gravity — smoke stays where it was left.
+   */
+  spawn(p: V, vx: number, vy: number, vz: number, rgba: Rgba, endRgb: Rgb, size: number, life: number, grow = 0, drag = 0, falls = false) {
     const i = this.next;
     this.next = (this.next + 1) % MAX_PUFFS;
     this.pos[i * 3] = p.x;
@@ -151,6 +155,7 @@ class Puffs {
     this.age[i] = 0;
     this.grow[i] = grow;
     this.drag[i] = drag;
+    this.falls[i] = falls ? 1 : 0;
   }
 
   step(dt: number) {
@@ -164,7 +169,7 @@ class Puffs {
       const p = Math.min(age / this.life[i], 1);
       const k = Math.max(1 - this.drag[i] * dt, 0);
       this.vel[i * 3] *= k;
-      this.vel[i * 3 + 1] = this.vel[i * 3 + 1] * k - GRAVITY * dt * (this.drag[i] ? 0 : 1);
+      this.vel[i * 3 + 1] = this.vel[i * 3 + 1] * k - GRAVITY * dt * this.falls[i];
       this.vel[i * 3 + 2] *= k;
       this.pos[i * 3] += this.vel[i * 3] * dt;
       this.pos[i * 3 + 1] += this.vel[i * 3 + 1] * dt;
@@ -407,7 +412,7 @@ export class Sky {
       f.head.quaternion.copy(this.quat).multiply(this.spinQuat);
       f.flame!.scale.setScalar(0.32 * (0.85 + 0.15 * Math.sin(this.time * 23 + f.spin * 7)));
       const tail = this.tmp2.copy(dir).multiplyScalar(-f.length * 0.55).add(pos);
-      this.emit(f, dt, tail, 0.03, 9, 2.4);
+      this.emit(f, dt, tail, 0.03, 4.5, 2.4);
     }
 
     if (f.interceptAt !== null && f.t >= f.interceptAt) {
@@ -424,7 +429,8 @@ export class Sky {
     f.emit -= dt;
     while (f.emit <= 0) {
       f.emit += every;
-      this.puffs.spawn(at, rand(-4, 4), rand(-4, 4), rand(-4, 4), EXHAUST[f.side], SMOKE, size, life, size * 1.4);
+      // Barely any drift: the trail stays on the trajectory, as a real exhaust trail does.
+      this.puffs.spawn(at, rand(-1, 1), rand(-1, 1), rand(-1, 1), EXHAUST[f.side], SMOKE, size, life, size * 1.4);
     }
   }
 
@@ -445,7 +451,7 @@ export class Sky {
       for (let i = 0; i < 14; i++) {
         const a = rand(0, Math.PI * 2);
         const v = rand(30, 90);
-        this.puffs.spawn(at, Math.cos(a) * v, Math.sin(a) * v, rand(-40, 40), [0.85, 1, 0.8, 0.9], [0.2, 0.4, 0.2], 4, rand(0.4, 0.8));
+        this.puffs.spawn(at, Math.cos(a) * v, Math.sin(a) * v, rand(-40, 40), [0.85, 1, 0.8, 0.9], [0.2, 0.4, 0.2], 4, rand(0.4, 0.8), 0, 0, true);
       }
       return;
     }
@@ -468,7 +474,7 @@ export class Sky {
     for (let i = 0; i < 30; i++) {
       const a = rand(0, Math.PI * 2);
       const v = rand(60, 220);
-      this.puffs.spawn(at, Math.cos(a) * v, Math.abs(Math.sin(a)) * v, rand(-80, 80), [1, 0.9, 0.6, 0.95], [0.6, 0.15, 0.02], 3.5, rand(0.6, 1.3));
+      this.puffs.spawn(at, Math.cos(a) * v, Math.abs(Math.sin(a)) * v, rand(-80, 80), [1, 0.9, 0.6, 0.95], [0.6, 0.15, 0.02], 3.5, rand(0.6, 1.3), 0, 0, true);
     }
   }
 
