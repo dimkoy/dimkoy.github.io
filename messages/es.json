@@ -50,7 +50,13 @@
     "stack": "Stack",
     "highlights": "Puntos clave",
     "media": "Capturas y vídeo",
-    "links": "Enlaces"
+    "links": "Enlaces",
+    "gallery": {
+      "open": "Abrir captura {n} de {total}",
+      "close": "Cerrar",
+      "prev": "Captura anterior",
+      "next": "Captura siguiente"
+    }
   },
   "blog": {
     "title": "Blog",

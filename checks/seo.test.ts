@@ -124,7 +124,7 @@ test("project pages: typed entity with breadcrumb; talk has location and video",
   assert.ok(game.author && Array.isArray(game.screenshot) && game.screenshot.length >= 5, "nuclear-wars author + screenshots");
   assert.equal(game.video?.["@type"], "VideoObject");
   assert.match(nw, /youtube-nocookie\.com\/embed\/I-g6ItBY7aM/, "trailer embed");
-  assert.match(nw, /<img[^>]+src="\/media\/nuclear-wars\/03-full-exchange\.jpg"[^>]+alt="[^"]{20,}"/, "gallery image with alt");
+  assert.match(nw, /<img[^>]+src="\/media\/nuclear-wars\/impact\.webp"[^>]+alt="[^"]{20,}"/, "gallery image with alt");
 });
 
 test("robots.txt, sitemap.xml, llms.txt, feeds, manifest, favicon", () => {

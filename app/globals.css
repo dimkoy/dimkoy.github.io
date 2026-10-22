@@ -130,3 +130,55 @@ body {
   :root:where(:not([data-theme="light"])) pre[data-theme*=" "] span,
   :root:where(:not([data-theme="light"])) code[data-theme*=" "] span { color: var(--shiki-dark); background-color: var(--shiki-dark-bg); }
 }
+
+/* ---------- project theme: Nuclear Wars ----------
+   The game's look on its project page: black, "nuclear" green, JetBrains Mono (OFL, Latin + Cyrillic
+   subset in public/fonts). :root:has() (0,2,1) outranks :root[data-theme] (0,2,0), so the page stays
+   dark in either site theme; the font is fetched only on pages that use it. */
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+:root:has(main[data-project-theme="nuclear-wars"]) {
+  --plane: #000000;
+  --surface: #0a0f0a;
+  --ink: #e6f5e1;
+  --ink2: #a7b5a3;
+  --muted: #7c8a78;
+  --grid: #142414;
+  --axis: #1f5c17;
+  --border: rgba(57, 255, 20, 0.18);
+  --accent: #39ff14;
+  --accent-deep: #8cff70;
+  --wash: rgba(57, 255, 20, 0.1);
+  --good: #39ff14;
+  --font-sans: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: dark;
+}
+[data-project-theme="nuclear-wars"] h1 {
+  color: var(--accent);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.75), 0 0 18px rgba(57, 255, 20, 0.45), 0 0 42px rgba(57, 255, 20, 0.25);
+}
+[data-project-theme="nuclear-wars"] h1::after {
+  content: "▌";
+  content: "▌" / "";
+  margin-left: 0.1em;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-project-theme="nuclear-wars"] h1::after { animation: nw-blink 1.1s steps(1) infinite; }
+}
+@keyframes nw-blink { 50% { opacity: 0; } }
+
+/* A modal <dialog> (screenshot viewer) doesn't stop the page behind it from scrolling. */
+html:has(dialog[open]) { overflow: hidden; }

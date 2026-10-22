@@ -1,7 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
+import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import { getProject, projects } from "@/content/projects";
+import { projectThemes } from "@/content/types";
+import { LoopClip } from "@/components/projects/LoopClip";
 import { MediaGallery } from "@/components/projects/MediaGallery";
 import { ProjectLinks } from "@/components/projects/ProjectLinks";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -26,6 +29,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isLocale(locale) || !project) return {};
   const p = project.i18n[locale];
   return buildMetadata({ locale, path: `/projects/${slug}`, title: p.title, description: p.tagline });
+}
+
+/** Themed project pages are dark regardless of the site theme — match the browser chrome. */
+export async function generateViewport({ params }: Props): Promise<Viewport> {
+  const { slug } = await params;
+  const theme = getProject(slug)?.theme;
+  return theme ? { themeColor: projectThemes[theme].themeColor } : {};
 }
 
 export default async function ProjectPage({ params }: Props) {
@@ -96,7 +106,7 @@ export default async function ProjectPage({ params }: Props) {
   );
 
   return (
-    <main className="py-10">
+    <main className="py-10" data-project-theme={project.theme}>
       <JsonLd data={jsonLd} />
       <p className="text-sm"><Link href={localePath(locale, "/projects")} className="text-muted hover:text-ink">← {dict.actions.backToProjects}</Link></p>
       <p className="mt-6 text-xs uppercase tracking-wider text-muted">
@@ -104,7 +114,15 @@ export default async function ProjectPage({ params }: Props) {
       </p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">{p.title}</h1>
       <p className="mt-2 text-lg text-ink2">{p.tagline}</p>
-      <div className="mt-5"><ProjectLinks links={project.links} locale={locale} dict={dict} /></div>
+      <div className="mt-5 flex flex-wrap items-center gap-2">
+        <ProjectLinks links={project.links} locale={locale} dict={dict} />
+        {project.badges?.map((b) => (
+          <a key={b.href} href={b.href} target="_blank" rel="noopener" className="inline-flex">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={b.src} alt={b.alt} width={b.width} height={b.height} className="h-[34px] w-auto" />
+          </a>
+        ))}
+      </div>
 
       {project.metrics && (
         <dl className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -120,7 +138,14 @@ export default async function ProjectPage({ params }: Props) {
       <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_16rem]">
         <div className="min-w-0">
           <div className="space-y-4 text-[15.5px] leading-relaxed text-ink2">
-            {p.description.map((para) => <p key={para}>{para}</p>)}
+            {p.description.map((para, i) => (
+              <Fragment key={para}>
+                <p>{para}</p>
+                {project.inline?.filter((x) => x.afterParagraph === i).map(({ clip }) => (
+                  <LoopClip key={clip.src} className="py-2" clip={clip} locale={locale} />
+                ))}
+              </Fragment>
+            ))}
           </div>
           <h2 className="mt-8 text-xs font-semibold uppercase tracking-wider text-muted">{dict.projects.highlights}</h2>
           <ul className="mt-3 space-y-1.5 text-[15px] leading-relaxed text-ink2">
@@ -129,7 +154,7 @@ export default async function ProjectPage({ params }: Props) {
           {project.media.length > 0 && (
             <>
               <h2 className="mt-8 text-xs font-semibold uppercase tracking-wider text-muted">{dict.projects.media}</h2>
-              <div className="mt-3"><MediaGallery media={project.media} locale={locale} /></div>
+              <div className="mt-3"><MediaGallery media={project.media} locale={locale} dict={dict} /></div>
             </>
           )}
         </div>

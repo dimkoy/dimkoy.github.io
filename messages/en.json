@@ -50,7 +50,13 @@
     "stack": "Stack",
     "highlights": "Highlights",
     "media": "Screenshots & video",
-    "links": "Links"
+    "links": "Links",
+    "gallery": {
+      "open": "Open screenshot {n} of {total}",
+      "close": "Close",
+      "prev": "Previous screenshot",
+      "next": "Next screenshot"
+    }
   },
   "blog": {
     "title": "Blog",

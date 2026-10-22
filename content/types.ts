@@ -15,7 +15,19 @@ export type ProjectLink = {
 export type Media =
   | { type: "image"; src: string; alt: Localized; width: number; height: number }
   | { type: "video"; src: string; poster?: string; alt: Localized; width: number; height: number }
-  | { type: "youtube"; id: string; alt: Localized; /** ISO date the video was published (VideoObject.uploadDate) */ uploadDate?: string; /** BCP-47 language of the video (VideoObject.inLanguage), defaults to "ru" */ language?: string };
+  | { type: "youtube"; id: string; alt: Localized; /** ISO date the video was published (VideoObject.uploadDate) */ uploadDate?: string; /** BCP-47 language of the video (VideoObject.inLanguage), defaults to "ru" */ language?: string }
+  /** Short silent looping clip that plays while on screen; `alt` doubles as its visible caption */
+  | { type: "clip"; src: string; poster: string; alt: Localized; width: number; height: number };
+
+export type ClipMedia = Extract<Media, { type: "clip" }>;
+
+/** Page-wide visual themes (see the [data-project-theme] rules in app/globals.css) */
+export const projectThemes = {
+  "nuclear-wars": { themeColor: "#000000" },
+} as const;
+
+/** External badge shown next to the project links (e.g. "Featured on …") */
+export type Badge = { href: string; src: string; alt: string; width: number; height: number };
 
 export type Metric = { value: string; label: Localized; sub?: Localized };
 
@@ -31,6 +43,10 @@ export type Project = {
   tech: string[];
   links: ProjectLink[];
   media: Media[];
+  /** Media placed inside the description, after the paragraph with this index */
+  inline?: { afterParagraph: number; clip: ClipMedia }[];
+  badges?: Badge[];
+  theme?: keyof typeof projectThemes;
   metrics?: Metric[];
   /** Awards or ratings the product received (used in structured data), English */
   awards?: string[];

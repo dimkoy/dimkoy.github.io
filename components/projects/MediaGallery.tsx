@@ -1,8 +1,13 @@
 import type { Media } from "@/content/types";
 import type { Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { ImageLightbox } from "./ImageLightbox";
+import { LoopClip } from "./LoopClip";
 
-export function MediaGallery({ media, locale }: { media: Media[]; locale: Locale }) {
+/** Videos first, in their order; screenshots after them as a grid that opens a full-size viewer. */
+export function MediaGallery({ media, locale, dict }: { media: Media[]; locale: Locale; dict: Dictionary }) {
   if (!media.length) return null;
+  const images = media.flatMap((m) => (m.type === "image" ? [{ src: m.src, alt: m.alt[locale], width: m.width, height: m.height }] : []));
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       {media.map((m, i) => {
@@ -13,6 +18,9 @@ export function MediaGallery({ media, locale }: { media: Media[]; locale: Locale
             </div>
           );
         }
+        if (m.type === "clip") {
+          return <LoopClip key={i} className="col-span-2 sm:col-span-3" clip={m} locale={locale} />;
+        }
         if (m.type === "video") {
           return (
             <video key={i} className="col-span-2 w-full rounded-xl border border-line bg-surface sm:col-span-1" controls playsInline preload="metadata" poster={m.poster} width={m.width} height={m.height} aria-label={m.alt[locale]}>
@@ -20,11 +28,9 @@ export function MediaGallery({ media, locale }: { media: Media[]; locale: Locale
             </video>
           );
         }
-        return (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img key={i} src={m.src} alt={m.alt[locale]} width={m.width} height={m.height} loading="lazy" decoding="async" className="w-full rounded-xl border border-line bg-surface" />
-        );
+        return null;
       })}
+      {images.length > 0 && <ImageLightbox images={images} labels={dict.projects.gallery} />}
     </div>
   );
 }
