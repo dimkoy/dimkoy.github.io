@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { nuclearWarsLanding as copy } from "@/content/landings/nuclear-wars";
 import type { ClipMedia, Project } from "@/content/types";
+import { ImageLightbox } from "@/components/projects/ImageLightbox";
 import { LoopClip } from "@/components/projects/LoopClip";
 import { MediaGallery } from "@/components/projects/MediaGallery";
 import { ProjectBadges } from "@/components/projects/ProjectBadges";
@@ -23,7 +24,7 @@ const NO_WINNERS_IMAGE = "/media/nuclear-wars/impact.webp";
 const delay = (i: number) => ({ "--i": i }) as CSSProperties;
 
 /**
- * Landing-style page of Nuclear Wars: full-screen hero, the three match phases with gameplay clips, the
+ * Landing-style page of Nuclear Wars: full-screen hero, the iPhone and iPad version, the three match phases with gameplay clips, the
  * "no winners" hook, units, metrics, gallery, the build story and a closing call to action — over a sky of
  * missiles (`NuclearSky`). Motion lives in the `[data-project-theme="nuclear-wars"]` rules of app/globals.css.
  */
@@ -32,7 +33,8 @@ export function NuclearWarsLanding({ project, locale, dict }: { project: Project
   const clips = [...project.media, ...(project.inline ?? []).map((x) => x.clip)].filter((m): m is ClipMedia => m.type === "clip");
   const clip = (src: string) => clips.find((c) => c.src === src);
   const hero = clip(HERO_CLIP);
-  const appStore = project.links.find((l) => l.kind === "appstore")?.url;
+  // One listing for every platform: drop `?platform=` so the shared CTA opens the neutral store page.
+  const appStore = project.links.find((l) => l.kind === "appstore")?.url?.split("?")[0];
   const ticker = copy.ticker[locale];
 
   return (
@@ -82,6 +84,26 @@ export function NuclearWarsLanding({ project, locale, dict }: { project: Project
           ))}
         </div>
       </div>
+
+      {/* iPhone and iPad */}
+      <section className="pt-24">
+        <header data-reveal className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-accent">{copy.mobile.kicker[locale]}</p>
+          <h2 className="nw-h2 mt-3">{copy.mobile.title[locale]}</h2>
+          <p className="mt-4 text-lg text-ink2">{copy.mobile.lead[locale]}</p>
+        </header>
+        <ul className="mt-10 grid gap-3 sm:grid-cols-3">
+          {copy.mobile.modes.map((m, i) => (
+            <li key={m.name.en} className="nw-card" data-reveal style={delay(i)}>
+              <p className="font-bold text-ink">{m.name[locale]}</p>
+              <p className="mt-1 text-sm leading-relaxed text-ink2">{m.text[locale]}</p>
+            </li>
+          ))}
+        </ul>
+        <div className="nw-wide mt-6 grid gap-3 sm:grid-cols-2" data-reveal>
+          <ImageLightbox images={copy.mobile.screenshots.map((s) => ({ ...s, alt: s.alt[locale] }))} labels={dict.projects.gallery} />
+        </div>
+      </section>
 
       {/* Phases */}
       <section className="pt-24">

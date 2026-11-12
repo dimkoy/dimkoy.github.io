@@ -117,7 +117,7 @@ test("project pages: typed entity with breadcrumb; talk has location and video",
   assert.ok(alfa.contributor && !alfa.author, "alfa-bank is a contribution, not an authored app");
   const nw = html(path.join(OUT, "en", "projects", "nuclear-wars", "index.html"));
   const [game] = byType(nw, "SoftwareApplication");
-  assert.equal(game.operatingSystem, "visionOS");
+  assert.equal(game.operatingSystem, "visionOS, iOS, iPadOS");
   assert.equal(game.applicationCategory, "GameApplication");
   assert.equal(game.datePublished, "2026-09-08");
   assert.equal(game.offers.price, "9.99");
@@ -125,6 +125,7 @@ test("project pages: typed entity with breadcrumb; talk has location and video",
   assert.equal(game.video?.["@type"], "VideoObject");
   assert.match(nw, /youtube-nocookie\.com\/embed\/I-g6ItBY7aM/, "trailer embed");
   assert.match(nw, /<img[^>]+src="\/media\/nuclear-wars\/impact\.webp"[^>]+alt="[^"]{20,}"/, "gallery image with alt");
+  assert.match(nw, /<img[^>]+src="\/media\/nuclear-wars\/ios-globe\.webp"[^>]+alt="[^"]{20,}"/, "iPhone screenshot with alt");
 });
 
 test("robots.txt, sitemap.xml, llms.txt, feeds, manifest, favicon", () => {

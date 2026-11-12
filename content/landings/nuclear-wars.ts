@@ -7,9 +7,9 @@ export type UnitKind = "silo" | "radar" | "abm" | "submarine" | "airbase";
 export const nuclearWarsLanding = {
   slogan: { en: "THE WORLD IS YOUR WAR ROOM", ru: "ВЕСЬ МИР — ВАШ ШТАБ", es: "EL MUNDO ES TU SALA DE GUERRA" } satisfies Localized,
   eyebrow: {
-    en: "Global RTS for Apple Vision Pro",
-    ru: "Глобальная RTS для Apple Vision Pro",
-    es: "RTS global para Apple Vision Pro",
+    en: "Global RTS for Apple Vision Pro, iPhone and iPad",
+    ru: "Глобальная RTS для Apple Vision Pro, iPhone и iPad",
+    es: "RTS global para Apple Vision Pro, iPhone y iPad",
   } satisfies Localized,
   skyHint: {
     en: "Click the sky to launch",
@@ -18,10 +18,87 @@ export const nuclearWarsLanding = {
   } satisfies Localized,
   scroll: { en: "Scroll", ru: "Листайте", es: "Desliza" } satisfies Localized,
   ticker: {
-    en: ["Apple Vision Pro", "Up to 6 players", "Game Center", "1–5 AI commanders", "No ads", "No accounts", "No data collection", "10 languages", "Native RealityKit"],
-    ru: ["Apple Vision Pro", "До 6 игроков", "Game Center", "1–5 ИИ-командующих", "Без рекламы", "Без аккаунтов", "Без сбора данных", "10 языков", "Нативный RealityKit"],
-    es: ["Apple Vision Pro", "Hasta 6 jugadores", "Game Center", "1–5 comandantes IA", "Sin anuncios", "Sin cuentas", "Sin recogida de datos", "10 idiomas", "RealityKit nativo"],
+    en: ["Apple Vision Pro", "iPhone & iPad", "Cross-play", "Up to 6 players", "Game Center", "1–5 AI commanders", "No ads", "No accounts", "No data collection", "10 languages", "Native RealityKit"],
+    ru: ["Apple Vision Pro", "iPhone и iPad", "Кросс-плей", "До 6 игроков", "Game Center", "1–5 ИИ-командующих", "Без рекламы", "Без аккаунтов", "Без сбора данных", "10 языков", "Нативный RealityKit"],
+    es: ["Apple Vision Pro", "iPhone y iPad", "Juego cruzado", "Hasta 6 jugadores", "Game Center", "1–5 comandantes IA", "Sin anuncios", "Sin cuentas", "Sin recogida de datos", "10 idiomas", "RealityKit nativo"],
   } satisfies Localized<string[]>,
+  mobile: {
+    kicker: { en: "New", ru: "Новинка", es: "Novedad" } satisfies Localized,
+    title: { en: "Now on iPhone and iPad.", ru: "Теперь на iPhone и iPad.", es: "Ahora en iPhone y iPad." } satisfies Localized,
+    lead: {
+      en: "The same war, built for touch — and cross-play puts iPhone, iPad and Apple Vision Pro commanders in the same match.",
+      ru: "Та же война, только под пальцы — а кросс-плей сводит командующих с iPhone, iPad и Apple Vision Pro в одном матче.",
+      es: "La misma guerra, pensada para el tacto, y el juego cruzado reúne a comandantes de iPhone, iPad y Apple Vision Pro en la misma partida.",
+    } satisfies Localized,
+    modes: [
+      {
+        name: { en: "2D map", ru: "2D-карта", es: "Mapa 2D" },
+        text: {
+          en: "A seamless world map that wraps around the planet. Tap a unit to command it, tap the map to set a target.",
+          ru: "Бесшовная карта мира вокруг всей планеты. Касание юнита — приказ, касание карты — цель.",
+          es: "Un mapa del mundo continuo que rodea el planeta. Toca una unidad para darle órdenes y el mapa para fijar un objetivo.",
+        },
+      },
+      {
+        name: { en: "3D globe", ru: "3D-глобус", es: "Globo 3D" },
+        text: {
+          en: "One tap turns the map into the same RealityKit globe as on Apple Vision Pro.",
+          ru: "Одно касание — и карта становится тем же RealityKit-глобусом, что и на Apple Vision Pro.",
+          es: "Un toque convierte el mapa en el mismo globo de RealityKit que en Apple Vision Pro.",
+        },
+      },
+      {
+        name: { en: "AR", ru: "AR", es: "RA" },
+        text: {
+          en: "Put the battle globe on any real table and walk around it.",
+          ru: "Поставьте боевой глобус на любой настоящий стол и обойдите его.",
+          es: "Pon el globo de batalla sobre cualquier mesa real y camina a su alrededor.",
+        },
+      },
+    ] satisfies { name: Localized; text: Localized }[],
+    screenshots: [
+      {
+        src: "/media/nuclear-wars/ios-map-war.webp",
+        width: 2400,
+        height: 1104,
+        alt: {
+          en: "iPhone, 2D map: missile arcs from six sides cross the whole world map in the full exchange",
+          ru: "iPhone, 2D-карта: дуги ракет шести сторон пересекают всю карту мира во время обмена ударами",
+          es: "iPhone, mapa 2D: arcos de misiles de seis bandos cruzan todo el mapa del mundo en el intercambio total",
+        },
+      },
+      {
+        src: "/media/nuclear-wars/ios-map-strikes.webp",
+        width: 2400,
+        height: 1104,
+        alt: {
+          en: "iPhone, 2D map up close: a salvo hits an enemy continent as damage numbers pop up",
+          ru: "iPhone, 2D-карта крупно: залп накрывает вражеский континент, всплывают цифры потерь",
+          es: "iPhone, mapa 2D de cerca: una salva impacta en un continente enemigo mientras aparecen las cifras de daños",
+        },
+      },
+      {
+        src: "/media/nuclear-wars/ios-globe.webp",
+        width: 2400,
+        height: 1104,
+        alt: {
+          en: "iPhone, 3D globe mode: explosions over your sector, radar coverage and incoming missiles, with the match HUD",
+          ru: "iPhone, режим 3D-глобуса: взрывы над вашим сектором, покрытие радаров и летящие ракеты, сверху HUD матча",
+          es: "iPhone, modo globo 3D: explosiones sobre tu sector, cobertura de radar y misiles entrantes, con el HUD de la partida",
+        },
+      },
+      {
+        src: "/media/nuclear-wars/ios-globe-close.webp",
+        width: 2400,
+        height: 1104,
+        alt: {
+          en: "iPhone, 3D globe up close: mushroom clouds rise over your cities among silos, radars and airbases",
+          ru: "iPhone, 3D-глобус крупно: ядерные грибы встают над вашими городами среди шахт, радаров и авиабаз",
+          es: "iPhone, globo 3D de cerca: hongos nucleares se alzan sobre tus ciudades entre silos, radares y bases aéreas",
+        },
+      },
+    ] satisfies { src: string; width: number; height: number; alt: Localized }[],
+  },
   phasesTitle: {
     en: "Three phases. One clock.",
     ru: "Три фазы. Один таймер.",
@@ -107,6 +184,6 @@ export const nuclearWarsLanding = {
   cta: {
     title: { en: "Take command.", ru: "Примите командование.", es: "Toma el mando." },
     button: { en: "Download on the App Store", ru: "Скачать в App Store", es: "Descargar en la App Store" },
-    note: { en: "Apple Vision Pro · No ads · No accounts", ru: "Apple Vision Pro · Без рекламы · Без аккаунтов", es: "Apple Vision Pro · Sin anuncios · Sin cuentas" },
+    note: { en: "Apple Vision Pro · iPhone · iPad · No ads · No accounts", ru: "Apple Vision Pro · iPhone · iPad · Без рекламы · Без аккаунтов", es: "Apple Vision Pro · iPhone · iPad · Sin anuncios · Sin cuentas" },
   } satisfies Record<string, Localized>,
 };
