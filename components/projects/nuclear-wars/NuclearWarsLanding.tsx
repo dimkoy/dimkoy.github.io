@@ -224,7 +224,7 @@ export function NuclearWarsLanding({ project, locale, dict }: { project: Project
             </a>
           )}
           <p className="mt-6 text-sm text-muted">{copy.cta.note[locale]}</p>
-          <div className="mt-6 flex justify-center"><ProjectBadges badges={project.badges} /></div>
+          <div className="mt-6 flex flex-wrap justify-center gap-2"><ProjectBadges badges={project.badges} /></div>
         </div>
       </section>
     </>
