@@ -10,6 +10,7 @@ import { ProjectLinks } from "@/components/projects/ProjectLinks";
 import { formatPeriod } from "@/lib/format";
 import { localePath, type Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { getLegalDocs } from "@/lib/legal";
 import { CountUp } from "./CountUp";
 import { HeroVideo } from "./HeroVideo";
 import { NuclearSky } from "./NuclearSky";
@@ -36,6 +37,8 @@ export function NuclearWarsLanding({ project, locale, dict }: { project: Project
   // One listing for every platform: drop `?platform=` so the shared CTA opens the neutral store page.
   const appStore = project.links.find((l) => l.kind === "appstore")?.url?.split("?")[0];
   const ticker = copy.ticker[locale];
+  const legalDocs = getLegalDocs(project.slug);
+  const legalLabels: Record<string, string> = dict.projects.legal.docs;
 
   return (
     <>
@@ -225,6 +228,13 @@ export function NuclearWarsLanding({ project, locale, dict }: { project: Project
           )}
           <p className="mt-6 text-sm text-muted">{copy.cta.note[locale]}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-2"><ProjectBadges badges={project.badges} /></div>
+          {legalDocs.length > 0 && (
+            <nav aria-label={dict.projects.legal.label} className="mt-8 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-muted">
+              {legalDocs.map((d) => (
+                <Link key={d.doc} href={localePath(locale, d.path)} className="hover:text-ink">{legalLabels[d.doc] ?? d.title}</Link>
+              ))}
+            </nav>
+          )}
         </div>
       </section>
     </>

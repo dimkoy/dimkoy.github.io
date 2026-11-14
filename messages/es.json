@@ -56,6 +56,13 @@
       "close": "Cerrar",
       "prev": "Captura anterior",
       "next": "Captura siguiente"
+    },
+    "legal": {
+      "label": "Información legal",
+      "docs": {
+        "privacy": "Política de privacidad",
+        "terms": "Términos y condiciones"
+      }
     }
   },
   "blog": {

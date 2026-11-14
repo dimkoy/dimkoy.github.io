@@ -126,6 +126,15 @@ test("project pages: typed entity with breadcrumb; talk has location and video",
   assert.match(nw, /youtube-nocookie\.com\/embed\/I-g6ItBY7aM/, "trailer embed");
   assert.match(nw, /<img[^>]+src="\/media\/nuclear-wars\/impact\.webp"[^>]+alt="[^"]{20,}"/, "gallery image with alt");
   assert.match(nw, /<img[^>]+src="\/media\/nuclear-wars\/ios-globe\.webp"[^>]+alt="[^"]{20,}"/, "iPhone screenshot with alt");
+  for (const l of LOCALES) {
+    const landing = html(path.join(OUT, l, "projects", "nuclear-wars", "index.html"));
+    for (const doc of ["privacy", "terms"]) {
+      const file = path.join(OUT, l, "projects", "nuclear-wars", doc, "index.html");
+      assert.ok(fs.existsSync(file), `${l}: nuclear-wars ${doc} page`);
+      assert.match(landing, new RegExp(`href="/${l}/projects/nuclear-wars/${doc}/"`), `${l}: landing links to ${doc}`);
+      assert.match(html(file), /<article lang="en"/, `${l}: ${doc} text is marked as English`);
+    }
+  }
 });
 
 test("robots.txt, sitemap.xml, llms.txt, feeds, manifest, favicon", () => {
@@ -136,6 +145,7 @@ test("robots.txt, sitemap.xml, llms.txt, feeds, manifest, favicon", () => {
   const urls = sitemap.match(/<url>/g) ?? [];
   assert.equal(urls.length, (sitemap.match(/<lastmod>/g) ?? []).length, "lastmod on every url");
   assert.equal(urls.length, (sitemap.match(/hreflang="x-default"/g) ?? []).length, "x-default on every url");
+  assert.match(sitemap, /<loc>https:\/\/dmitriicherviakov\.com\/en\/projects\/nuclear-wars\/privacy\/<\/loc>/, "privacy policy in sitemap");
   const llms = fs.readFileSync(path.join(OUT, "llms.txt"), "utf8");
   assert.ok(llms.startsWith("# Dmitrii Cherviakov\n"), "llms.txt heading");
   assert.match(llms, /llms-full\.txt/);

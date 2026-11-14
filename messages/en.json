@@ -56,6 +56,13 @@
       "close": "Close",
       "prev": "Previous screenshot",
       "next": "Next screenshot"
+    },
+    "legal": {
+      "label": "Legal",
+      "docs": {
+        "privacy": "Privacy Policy",
+        "terms": "Terms and Conditions"
+      }
     }
   },
   "blog": {
