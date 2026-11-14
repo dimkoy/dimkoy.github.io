@@ -7,7 +7,7 @@ dateLabel: Effective Date
 
 ## Overview
 
-These Terms and Conditions ("Terms") govern the use of Nuclear Wars, a strategy game for Apple Vision Pro (the "Service") developed by Dmitrii Cherviakov (the "Company," "we," "us," or "our"). By downloading or using the Service, you agree to be bound by these Terms. If you do not agree, do not use the Service.
+These Terms and Conditions ("Terms") govern the use of Nuclear Wars, a strategy game for Apple Vision Pro, iPhone and iPad (the "Service") developed by Dmitrii Cherviakov (the "Company," "we," "us," or "our"). By downloading or using the Service, you agree to be bound by these Terms. If you do not agree, do not use the Service.
 
 ## Service Description
 

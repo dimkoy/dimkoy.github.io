@@ -14,7 +14,7 @@ The short version: **Nuclear Wars does not collect personal data and has no acco
 
 Capitalized terms have the following meanings, whether they appear in singular or plural:
 
-- **Application / Service:** Nuclear Wars, a strategy game for Apple Vision Pro developed by Dmitrii Cherviakov.
+- **Application / Service:** Nuclear Wars, a strategy game for Apple Vision Pro, iPhone and iPad developed by Dmitrii Cherviakov.
 - **Company:** Dmitrii Cherviakov (referred to as "we," "us," or "our").
 - **Country:** Spain.
 - **You:** The individual using the Service.
