@@ -1,7 +1,7 @@
 ---
 title: Privacy Policy — Nuclear Wars
 description: How Nuclear Wars handles information on Apple Vision Pro, iPhone and iPad — anonymous usage statistics, Game Center, in-app purchases and your rights.
-updated: "2026-11-14"
+updated: "2026-11-15"
 ---
 
 ## Introduction
@@ -28,7 +28,8 @@ The Service:
 - does not require or offer account registration;
 - does not collect names, email addresses, or contact information;
 - does not use the advertising identifier (IDFA), advertising or tracking of any kind;
-- collects anonymous usage statistics, described below.
+- collects anonymous usage statistics, described below;
+- receives from Apple the transaction details of in-app purchases, described under In-App Purchases.
 
 **Usage statistics.** The Service records gameplay and menu events such as starting or completing the training, starting or finishing a match (number of opponents and the result), opening or closing the purchase screen, and the outcome of a purchase or restore attempt. Each event carries a random identifier created on first launch, the app version, the platform, and whether the full version is unlocked. These statistics are not linked to your identity and are not used for tracking or advertising.
 
@@ -40,6 +41,8 @@ Statistics processed by Google Analytics for Firebase are retained by Google for
 ## In-App Purchases
 
 The full version is sold as an in-app purchase through the App Store. Payments are processed by Apple; the Company never receives your payment details. The Service records whether the full version is unlocked (and, in the statistics above, whether a purchase succeeded) but no payment information.
+
+Apple also notifies a server operated by the Company about purchases and refunds of the full version. These notices contain transaction details only — such as the transaction identifier, the product, the price and the storefront country — and never your name, email address, or payment details. The Company keeps them for as long as needed to account for sales and refunds.
 
 ## Multiplayer, Leaderboards and Game Center
 
