@@ -2,6 +2,57 @@ import type { Project } from "./types";
 
 export const projects: Project[] = [
   {
+    slug: "founders-ai",
+    kind: "product",
+    featured: false,
+    period: { start: "2026-09" },
+    externalUrl: "https://founderai.dmitriicherviakov.com",
+    tech: ["Swift", "SwiftUI", "macOS", "iOS", "App Store Connect API", "Swift Charts", "Python", "Claude API"],
+    links: [],
+    media: [],
+    i18n: {
+      en: {
+        title: "Founders AI",
+        role: "Solo developer",
+        tagline: "An app for iOS app founders, built from my own experience of shipping my apps. Every morning it turns your App Store Connect numbers into a short brief: what changed, the likely cause and what to do next. Private beta, invite-only.",
+        description: [
+          "Founders AI is an app for founders of iOS apps. I ship my own apps and built it for myself first: it pulls their real data — downloads, revenue, funnels, reviews — and turns it into a short brief: what changed, the likely cause, and what to do next. Now I'm opening a private beta.",
+          "Invitations go out in small batches through the waitlist on the landing page.",
+        ],
+        highlights: [
+          "A Mac app with an iPhone companion: the Mac does the work, the iPhone shows your numbers",
+          "Claude by Anthropic or a local model through LM Studio, chosen per app, with a daily spending cap",
+        ],
+      },
+      ru: {
+        title: "Founders AI",
+        role: "Соло-разработчик",
+        tagline: "Приложение для фаундеров iOS-приложений, сделанное на основе моего собственного опыта выпуска своих приложений. Каждое утро превращает цифры App Store Connect в короткую сводку: что изменилось, вероятная причина и что делать дальше. Закрытая бета, по приглашениям.",
+        description: [
+          "Founders AI — приложение для фаундеров iOS-приложений. Я сам выпускаю свои приложения и сначала сделал его для себя: оно собирает их реальные данные — загрузки, выручку, воронки, отзывы — и превращает в короткую сводку: что изменилось, вероятная причина и что делать дальше. Теперь открываю закрытую бету.",
+          "Приглашения рассылаются небольшими партиями через список ожидания на лендинге.",
+        ],
+        highlights: [
+          "Приложение для Mac с компаньоном на iPhone: работает Мак, iPhone показывает ваши цифры",
+          "Claude от Anthropic или локальная модель через LM Studio — выбор для каждого приложения, с дневным лимитом расходов",
+        ],
+      },
+      es: {
+        title: "Founders AI",
+        role: "Desarrollador en solitario",
+        tagline: "Una app para fundadores de apps de iOS, creada a partir de mi propia experiencia publicando mis apps. Cada mañana convierte tus números de App Store Connect en un resumen breve: qué cambió, la causa probable y qué hacer después. Beta privada, solo por invitación.",
+        description: [
+          "Founders AI es una app para fundadores de apps de iOS. Publico mis propias apps y primero lo hice para mí: reúne sus datos reales — descargas, ingresos, embudos, reseñas — y los convierte en un resumen breve: qué cambió, la causa probable y qué hacer después. Ahora abro una beta privada.",
+          "Las invitaciones se envían en pequeños grupos a través de la lista de espera de la página del producto.",
+        ],
+        highlights: [
+          "Una app para Mac con compañera en iPhone: el Mac hace el trabajo, el iPhone muestra tus números",
+          "Claude de Anthropic o un modelo local mediante LM Studio, a elegir por app, con un límite de gasto diario",
+        ],
+      },
+    },
+  },
+  {
     slug: "nuclear-wars",
     kind: "product",
     featured: true,
@@ -368,3 +419,9 @@ export function getProject(slug: string): Project | undefined {
 }
 
 export const featuredProjects = projects.filter((p) => p.featured);
+
+/** Projects with a page on this site (the rest link out to their own sites). */
+export const projectsWithPages = projects.filter((p) => !p.externalUrl);
+
+/** Where a project links to: its own site, or its page here turned into a URL by `onSite`. */
+export const projectUrl = (p: Project, onSite: (path: string) => string) => p.externalUrl ?? onSite(`/projects/${p.slug}`);

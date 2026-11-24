@@ -60,6 +60,8 @@ export type Project = {
   price?: string;
   /** Exact ISO release date; defaults to the first day of period.start */
   released?: string;
+  /** The project lives on its own site: the card links there and no page is built here */
+  externalUrl?: string;
   /** Whether the person built the product ("author", default) or worked on someone else's ("contributor") */
   ownership?: "author" | "contributor";
   i18n: Localized<{

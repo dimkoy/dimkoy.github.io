@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { projects } from "@/content/projects";
+import { projectsWithPages } from "@/content/projects";
 import { CONTENT_UPDATED } from "@/content/updated";
 import { getAllPosts } from "@/lib/blog";
 import { getLegalDocs } from "@/lib/legal";
@@ -24,7 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...entry("/", CONTENT_UPDATED.resume, 1),
     ...entry("/projects", CONTENT_UPDATED.projects, 0.8),
-    ...projects.flatMap((p) => entry(`/projects/${p.slug}`, p.updated ?? CONTENT_UPDATED.projects, 0.7)),
+    ...projectsWithPages.flatMap((p) => entry(`/projects/${p.slug}`, p.updated ?? CONTENT_UPDATED.projects, 0.7)),
     ...getLegalDocs().flatMap((d) => entry(d.path, d.updated, 0.3)),
     ...entry("/blog", newest, 0.8),
     ...posts.flatMap((p) => entry(`/blog/${p.slug}`, p.updated ?? p.date, 0.7)),

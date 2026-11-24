@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { projects } from "@/content/projects";
+import { projects, projectUrl } from "@/content/projects";
 import { ProjectCard } from "@/components/projects/ProjectCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { isLocale } from "@/lib/i18n/config";
@@ -41,7 +41,7 @@ export default async function ProjectsPage({ params }: Props) {
           position: i + 1,
           name: p.i18n[locale].title,
           description: p.i18n[locale].tagline,
-          url: absUrl(locale, `/projects/${p.slug}`),
+          url: projectUrl(p, (path) => absUrl(locale, path)),
         })),
       },
     },

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Fragment } from "react";
 import { notFound } from "next/navigation";
-import { getProject, projects } from "@/content/projects";
+import { getProject, projectsWithPages } from "@/content/projects";
 import { projectThemes } from "@/content/types";
 import { LoopClip } from "@/components/projects/LoopClip";
 import { MediaGallery } from "@/components/projects/MediaGallery";
@@ -22,7 +22,7 @@ type Props = { params: Promise<{ locale: string; slug: string }> };
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return locales.flatMap((locale) => projects.map((p) => ({ locale, slug: p.slug })));
+  return locales.flatMap((locale) => projectsWithPages.map((p) => ({ locale, slug: p.slug })));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

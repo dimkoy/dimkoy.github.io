@@ -1,4 +1,4 @@
-import { projects } from "@/content/projects";
+import { projects, projectUrl } from "@/content/projects";
 import { resumeEn } from "@/content/resume.en";
 import { FEATS, STATS, YOY_WINDOWS } from "@/content/stats/growdiaries";
 import { getAllPosts } from "@/lib/blog";
@@ -41,7 +41,7 @@ export async function GET() {
   push("## Projects", "");
   for (const p of projects) {
     const i = p.i18n.en;
-    push(`### ${i.title}`, "", `${dict.projects.kinds[p.kind]} · ${i.role} · ${period(p.period.start, p.period.end)} · ${u(`/projects/${p.slug}`)}`, "", i.tagline, "", ...i.description, "");
+    push(`### ${i.title}`, "", `${dict.projects.kinds[p.kind]} · ${i.role} · ${period(p.period.start, p.period.end)} · ${projectUrl(p, u)}`, "", i.tagline, "", ...i.description, "");
     if (p.metrics) push(...p.metrics.map((m) => `- ${m.value} ${m.label.en}`), "");
     if (p.awards) push(...p.awards.map((a) => `- Award: ${a}`), "");
     push("Highlights:", "", ...i.highlights.map((h) => `- ${h}`), "");

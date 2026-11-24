@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { projectUrl } from "@/content/projects";
 import type { Project } from "@/content/types";
 import { formatPeriod } from "@/lib/format";
 import { localePath, type Locale } from "@/lib/i18n/config";
@@ -9,13 +10,14 @@ type Props = { project: Project; locale: Locale; dict: Dictionary; /** h2 on the
 export function ProjectCard({ project, locale, dict, headingLevel = "h3" }: Props) {
   const p = project.i18n[locale];
   const H = headingLevel;
+  const external = Boolean(project.externalUrl);
   return (
-    <Link href={localePath(locale, `/projects/${project.slug}`)} className="group flex flex-col rounded-xl border border-line bg-surface p-5 transition-colors hover:border-axis">
+    <Link href={projectUrl(project, (path) => localePath(locale, path))} target={external ? "_blank" : undefined} rel={external ? "noopener" : undefined} className="group flex flex-col rounded-xl border border-line bg-surface p-5 transition-colors hover:border-axis">
       <div className="flex items-center justify-between gap-3 text-xs text-muted">
         <span className="uppercase tracking-wider">{dict.projects.kinds[project.kind]}</span>
         <span className="tnum">{formatPeriod(project.period.start, project.period.end, dict.home.present, locale)}</span>
       </div>
-      <H className="mt-2 text-lg font-semibold group-hover:text-accent">{p.title}</H>
+      <H className="mt-2 text-lg font-semibold group-hover:text-accent">{p.title}{external && <span aria-hidden="true"> ↗</span>}</H>
       <p className="mt-1 text-sm text-ink2">{p.tagline}</p>
       {project.metrics && (
         <dl className="mt-4 flex flex-wrap gap-x-5 gap-y-2">

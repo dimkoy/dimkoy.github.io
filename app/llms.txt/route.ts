@@ -1,4 +1,4 @@
-import { projects } from "@/content/projects";
+import { projects, projectUrl } from "@/content/projects";
 import { resumeEn } from "@/content/resume.en";
 import { getAllPosts } from "@/lib/blog";
 import { formatPeriod } from "@/lib/format";
@@ -38,7 +38,7 @@ export async function GET() {
     "## Projects",
     "",
     `- [All projects](${u("/projects")}): ${dict.projects.description}`,
-    ...projects.map((p) => `- [${p.i18n.en.title}](${u(`/projects/${p.slug}`)}): ${p.i18n.en.tagline}`),
+    ...projects.map((p) => `- [${p.i18n.en.title}](${projectUrl(p, u)}): ${p.i18n.en.tagline}`),
     "",
     "## Blog",
     "",
