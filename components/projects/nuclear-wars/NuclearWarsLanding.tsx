@@ -25,7 +25,7 @@ const NO_WINNERS_IMAGE = "/media/nuclear-wars/impact.webp";
 const delay = (i: number) => ({ "--i": i }) as CSSProperties;
 
 /**
- * Landing-style page of Nuclear Wars: full-screen hero, the iPhone and iPad version, the three match phases with gameplay clips, the
+ * Landing-style page of Nuclear Wars: full-screen hero, what's new in 1.7 (video and changes), the iPhone and iPad version, the three match phases with gameplay clips, the
  * "no winners" hook, units, metrics, gallery, the build story and a closing call to action — over a sky of
  * missiles (`NuclearSky`). Motion lives in the `[data-project-theme="nuclear-wars"]` rules of app/globals.css.
  */
@@ -88,6 +88,36 @@ export function NuclearWarsLanding({ project, locale, dict }: { project: Project
         </div>
       </div>
 
+      {/* Version 1.7 */}
+      <section className="pt-24">
+        <header data-reveal className="max-w-2xl">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-accent">{copy.update.kicker[locale]}</p>
+          <h2 className="nw-h2 mt-3">{copy.update.title[locale]}</h2>
+          <p className="mt-4 text-lg text-ink2">{copy.update.lead[locale]}</p>
+        </header>
+        <figure className="mt-10" data-reveal>
+          <div className="aspect-video overflow-hidden rounded-xl border border-line bg-surface">
+            <iframe
+              className="h-full w-full"
+              src={`https://www.youtube-nocookie.com/embed/${copy.update.video.id}`}
+              title={copy.update.video.title[locale]}
+              allow="accelerometer; encrypted-media; picture-in-picture"
+              allowFullScreen
+              loading="lazy"
+            />
+          </div>
+          <figcaption className="mt-3 text-center text-xs tracking-wide text-muted">{copy.update.video.caption[locale]}</figcaption>
+        </figure>
+        <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {copy.update.items.map((item, i) => (
+            <li key={item.name.en} className="nw-card" data-reveal style={delay(i)}>
+              <p className="font-bold text-ink">{item.name[locale]}</p>
+              <p className="mt-1 text-sm leading-relaxed text-ink2">{item.text[locale]}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {/* iPhone and iPad */}
       <section className="pt-24">
         <header data-reveal className="max-w-2xl">
@@ -103,7 +133,7 @@ export function NuclearWarsLanding({ project, locale, dict }: { project: Project
             </li>
           ))}
         </ul>
-        <div className="nw-wide mt-6 grid gap-3 sm:grid-cols-2" data-reveal>
+        <div className="nw-wide mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2" data-reveal>
           <ImageLightbox images={copy.mobile.screenshots.map((s) => ({ ...s, alt: s.alt[locale] }))} labels={dict.projects.gallery} />
         </div>
       </section>

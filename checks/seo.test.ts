@@ -125,7 +125,8 @@ test("project pages: typed entity with breadcrumb; talk has location and video",
   assert.equal(game.video?.["@type"], "VideoObject");
   assert.match(nw, /youtube-nocookie\.com\/embed\/I-g6ItBY7aM/, "trailer embed");
   assert.match(nw, /<img[^>]+src="\/media\/nuclear-wars\/impact\.webp"[^>]+alt="[^"]{20,}"/, "gallery image with alt");
-  assert.match(nw, /<img[^>]+src="\/media\/nuclear-wars\/ios-globe\.webp"[^>]+alt="[^"]{20,}"/, "iPhone screenshot with alt");
+  assert.match(nw, /<img[^>]+src="\/media\/nuclear-wars\/ios-globe-war\.webp"[^>]+alt="[^"]{20,}"/, "iPhone screenshot with alt");
+  assert.match(nw, /youtube-nocookie\.com\/embed\/hlTb57c13Dw/, "1.7 video embed");
   for (const l of LOCALES) {
     const landing = html(path.join(OUT, l, "projects", "nuclear-wars", "index.html"));
     for (const doc of ["privacy", "terms"]) {
