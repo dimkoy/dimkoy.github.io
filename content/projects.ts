@@ -61,7 +61,6 @@ export const projects: Project[] = [
     updated: "2026-11-25",
     platform: "visionOS, iOS, iPadOS",
     applicationCategory: "GameApplication",
-    price: "9.99",
     tech: ["Swift", "SwiftUI", "RealityKit", "visionOS", "iOS", "iPadOS", "ARKit", "GameKit", "Swift Concurrency", "Claude Code"],
     links: [
       { kind: "appstore", url: "https://apps.apple.com/us/app/nuclear-wars/id6787667058?platform=vision", label: { en: "App Store · Apple Vision Pro", ru: "App Store · Apple Vision Pro", es: "App Store · Apple Vision Pro" } },

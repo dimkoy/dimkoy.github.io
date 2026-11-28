@@ -120,7 +120,7 @@ test("project pages: typed entity with breadcrumb; talk has location and video",
   assert.equal(game.operatingSystem, "visionOS, iOS, iPadOS");
   assert.equal(game.applicationCategory, "GameApplication");
   assert.equal(game.datePublished, "2026-09-08");
-  assert.equal(game.offers.price, "9.99");
+  assert.equal(game.offers.price, "0", "free to download; the full game is an in-app purchase");
   assert.ok(game.author && Array.isArray(game.screenshot) && game.screenshot.length >= 5, "nuclear-wars author + screenshots");
   assert.equal(game.video?.["@type"], "VideoObject");
   assert.match(nw, /youtube-nocookie\.com\/embed\/I-g6ItBY7aM/, "trailer embed");
